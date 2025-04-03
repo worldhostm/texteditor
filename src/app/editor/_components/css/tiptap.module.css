@@ -1,0 +1,31 @@
+.control-group > *{
+  font-family: 'Hana2-Regular' !important;
+}
+
+.editorBox {
+    background-color: #e5e7eb; /* Tailwind의 bg-gray-200 */
+    width: auto;
+    height: auto;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    margin-left: 8px;
+    margin-bottom: 4px;
+  }
+
+  .control-group{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .gethtml{
+
+  }
+  .gethtml p{
+  } 
+
+  .tiptap ul > li{
+    margin-left: 20px;
+  }

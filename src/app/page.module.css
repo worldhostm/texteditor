@@ -166,3 +166,19 @@ a.secondary {
     filter: invert();
   }
 }
+
+
+.tiptap:first-child p + p{
+  margin: 1px auto 0;
+}
+
+.tiptap button{
+  background-color: #e5e7eb; /* Tailwind의 bg-gray-200 */
+  width: auto;
+  height: auto;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  margin-left: 8px;
+  margin-bottom: 4px;
+}
