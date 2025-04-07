@@ -23,7 +23,7 @@ import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
 import TableRow from '@tiptap/extension-table-row';
 import Text from '@tiptap/extension-text';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {TextBox} from './extensions/TextBox';
 import FileHandler from '@tiptap-pro/extension-file-handler';
 import TextAlign from '@tiptap/extension-text-align';
@@ -31,14 +31,13 @@ import Strike from '@tiptap/extension-strike';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
 import Underline from '@tiptap/extension-underline';
-// import Emoji, { gitHubEmojis } from '@tiptap-pro/extension-emoji'
-// import suggestion from './suggestion';
+import Emoji, { gitHubEmojis } from '@tiptap-pro/extension-emoji';
+import styled from 'styled-components';
+import { EmojiCommand } from './extensions/EmojiCommand';
+import {EmojiPicker} from './EmojiPicker';
+import  Picker  from '@emoji-mart/react';
 
-// Emoji.configure({
-//   emojis: gitHubEmojis,
-// })
-
-import styled from 'styled-components'
+const emojis = ['😀', '😂', '😍', '😎', '😢', '😡', '👍', '🎉', '🔥']
 
 export const ButtonGroup = styled.div`
   display: block;
@@ -57,9 +56,26 @@ Table.configure({
     class: 'my-custom-class',
   },
 })
+
+interface Position {
+  top: number
+  left: number
+}
+
 export default function TiptapEditor({ id, initialContent }: TiptapEditorProps) {
+
+  const [showPicker, setShowPicker] = useState(false)
+  const [position, setPosition] = useState<Position>({ top: 0, left: 0 })
+
+  const handleEmojiClick = (emoji: string) => {
+    if (!editor) return
+    editor.chain().focus().insertContent(emoji).run()
+    setShowPicker(false)
+  }
+
   const editor = useEditor({
     extensions: [
+      EmojiCommand,
       // StarterKit,
       Document,
       Highlight.configure({ multicolor: true }),
@@ -189,6 +205,9 @@ export default function TiptapEditor({ id, initialContent }: TiptapEditorProps) 
           })
         },
       }),
+      Emoji.configure({
+        emojis: gitHubEmojis,
+      }),
     ],
     content:``,
   })
@@ -228,7 +247,16 @@ export default function TiptapEditor({ id, initialContent }: TiptapEditorProps) 
       }
     }, [editor]);
 
-  if (!editor) return null
+    if (!editor) return null
+    
+    // const handleEmojiSelect = (emoji: string) => {
+    //   editor?.commands.insertEmoji(emoji)
+    //   setShowPicker(false)
+    // }
+    const handleEmojiSelect = (emoji: string) => {
+      editor?.commands.insertEmoji(emoji)
+      setShowPicker(false)
+    }
 
   return (
     // bg-gray-200 w-[auto] h-[auto] p-[10px] rounded-[8px]
@@ -239,17 +267,42 @@ export default function TiptapEditor({ id, initialContent }: TiptapEditorProps) 
     //   >
     <div className={styles['control-group']}>
     <ButtonGroup>
-    <button
-      onClick={() => {
-        const videoId = prompt('YouTube Video ID를 입력하세요 (예: dQw4w9WgXcQ)');
-        if (videoId) {
-          const src = `https://www.youtube.com/embed/${videoId}`;
-          editor?.commands.setYouTubeVideo(src);
-        }
-      }}
-    >
-      유튜브 영상 삽입
-    </button>
+          <button
+              onClick={() => setShowPicker(prev => !prev)}
+              className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
+            >
+              😊 이모지 삽입
+            </button>
+            {showPicker && editor && (
+              <EmojiPicker
+              onSelect={handleEmojiSelect}
+              position={position}
+            />
+            )}
+            {showPicker && (
+              <div className="absolute mt-2 p-2 bg-white border rounded shadow z-50 flex flex-wrap gap-2">
+                {emojis.map((emoji, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleEmojiClick(emoji)}
+                    className="text-xl hover:scale-125 transition"
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            )}
+          <button
+            onClick={() => {
+              const videoId = prompt('YouTube Video ID를 입력하세요 (예: dQw4w9WgXcQ)');
+              if (videoId) {
+                const src = `https://www.youtube.com/embed/${videoId}`;
+                editor?.commands.setYouTubeVideo(src);
+              }
+            }}
+          >
+            유튜브 영상 삽입
+          </button>
           <button
             onClick={() => editor.chain().focus().toggleBulletList().run()}
             className={editor.isActive('bulletList') ? 'is-active' : ''}

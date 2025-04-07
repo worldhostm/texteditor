@@ -1,3 +1,13 @@
+@media (max-width:768px) {
+  .tiptap, .control-group{
+    width: 100% !important;
+  }
+  .gethtml{
+    padding : 0px 24px !important;
+  }
+  
+}
+
 .control-group > *{
   font-family: 'Hana2-Regular' !important;
 }
@@ -29,3 +39,5 @@
   .tiptap ul > li{
     margin-left: 20px;
   }
+  
+  
