@@ -1,0 +1,63 @@
+
+@media (max-width:1024px) {
+    .container{
+        width: 100%;
+        min-height: 70px;
+        height: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .container a{
+        display: flex;
+        width: 100%;
+        gap: 20px;
+        justify-content: space-between;
+    }
+    .tileimg{
+        border-radius: 20px;
+        width: 30%;
+        height: auto;
+        min-height: 70px;
+        /* background-image: url('/default_service.png'); */
+        background-size: cover;
+        background-repeat: no-repeat;
+        aspect-ratio: 300/180;
+    }
+    .tileText  {
+        width: 70%;
+        display: flex;
+        align-items: baseline;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .title{
+
+    }
+    .regDate, .regDate_card{
+        color : var(--gray-300);
+    }
+
+    /* 슬라이드 카드 css 따로 */
+    .container_card{
+
+    }
+    .container_card > a{
+        display: flex;
+        flex-direction: column;
+    }
+    .tileimg_card{
+        border-radius: 20px;
+        width: 100%;
+        height: auto;
+        min-height: 70px;
+        background-image: url('/default_service.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+        aspect-ratio: 3/2;
+    }
+    .regDate_card{
+
+    }
+}

@@ -1,5 +1,6 @@
 'use client'
 
+import axios from 'axios';
 import styles from './css/tiptap.module.css';
 import Blockquote from '@tiptap/extension-blockquote';
 import Bold from '@tiptap/extension-bold';
@@ -35,7 +36,7 @@ import Emoji, { gitHubEmojis } from '@tiptap-pro/extension-emoji';
 import styled from 'styled-components';
 import { EmojiCommand } from './extensions/EmojiCommand';
 import {EmojiPicker} from './EmojiPicker';
-import  Picker  from '@emoji-mart/react';
+import SVGIcon from '@/app/_components/SVGIcon';
 
 const emojis = ['😀', '😂', '😍', '😎', '😢', '😡', '👍', '🎉', '🔥']
 
@@ -43,14 +44,16 @@ export const ButtonGroup = styled.div`
   display: block;
   gap: 8px;
   word-break: break-all;
-  width: 1200px;
+  width: 100%;
   height: auto;
 `;
 
-interface TiptapEditorProps {
-  id: string
-  initialContent?: string
-}
+type Status = 'draft' | 'scheduled' | 'published'
+
+// interface TiptapEditorProps {
+//   id: string
+//   initialContent?: string
+// }
 Table.configure({
   HTMLAttributes: {
     class: 'my-custom-class',
@@ -62,10 +65,13 @@ interface Position {
   left: number
 }
 
-export default function TiptapEditor({ id, initialContent }: TiptapEditorProps) {
+export default function TiptapEditor() {
 
   const [showPicker, setShowPicker] = useState(false)
-  const [position, setPosition] = useState<Position>({ top: 0, left: 0 })
+  const [position] = useState<Position>({ top: 0, left: 0 })
+  const [status, setStatus] = useState<'draft'| 'scheduled'| 'published'>('draft'); // 예시로 string
+  
+  const [title, setTitle] = useState('');
 
   const handleEmojiClick = (emoji: string) => {
     if (!editor) return
@@ -258,20 +264,26 @@ export default function TiptapEditor({ id, initialContent }: TiptapEditorProps) 
       setShowPicker(false)
     }
 
+    const handleSave = async () => {
+      try {
+        const res = await axios.post('/api/save', { title,content: editor.getHTML(), status});
+        console.log('✅ 저장 성공', res.data);
+      } catch (err) {
+        console.error('❌ 저장 실패', err);
+      }
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setStatus(e.target.value as Status)
+    }
+
   return (
-    // bg-gray-200 w-[auto] h-[auto] p-[10px] rounded-[8px]
-    // <div style={{ border: '1px solid #ccc', padding: '1rem', marginBottom: '2rem' }}>
-    //   <div 
-    //   className='flex gap-[8px]'
-    //   style={{ marginBottom: '0.5rem' }}
-    //   >
     <div className={styles['control-group']}>
     <ButtonGroup>
           <button
               onClick={() => setShowPicker(prev => !prev)}
-              className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
             >
-              😊 이모지 삽입
+              <SVGIcon id="sentiment-satisfied" />
             </button>
             {showPicker && editor && (
               <EmojiPicker
@@ -307,7 +319,7 @@ export default function TiptapEditor({ id, initialContent }: TiptapEditorProps) 
             onClick={() => editor.chain().focus().toggleBulletList().run()}
             className={editor.isActive('bulletList') ? 'is-active' : ''}
           >
-            Toggle bullet list
+            Toggle bullet list 
           </button>
           <button
             onClick={() => editor.chain().focus().splitListItem('listItem').run()}
@@ -403,7 +415,7 @@ export default function TiptapEditor({ id, initialContent }: TiptapEditorProps) 
             onClick={() => editor.chain().focus().toggleHighlight({ color: 'red' }).run()}
             className={editor.isActive('highlight', { color: 'red' }) ? 'is-active' : ''}
           >
-            Red ('red')
+            Red (red)
           </button>
           <button
             onClick={() => editor.chain().focus().toggleHighlight({ color: '#ffa8a8' }).run()}
@@ -461,7 +473,8 @@ export default function TiptapEditor({ id, initialContent }: TiptapEditorProps) 
             onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: false  }).run()}>
             Insert table
           </button>
-          <button className ={styles.editorBox} onClick={() => editor.chain().focus().addColumnBefore().run()}>
+          {/* 테이블 관련 start */}
+          {/* <button className ={styles.editorBox} onClick={() => editor.chain().focus().addColumnBefore().run()}>
             Add column before
           </button>
           <button className ={styles.editorBox} onClick={() => editor.chain().focus().addColumnAfter().run()}>Add column after</button>
@@ -474,7 +487,7 @@ export default function TiptapEditor({ id, initialContent }: TiptapEditorProps) 
           <button className ={styles.editorBox} onClick={() => editor.chain().focus().splitCell().run()}>Split cell</button>
           <button className ={styles.editorBox} onClick={() => editor.chain().focus().toggleHeaderColumn().run()}>
             Toggle header column
-          </button>
+          </button> 
           <button className ={styles.editorBox} onClick={() => editor.chain().focus().toggleHeaderRow().run()}>
             Toggle header row
           </button>
@@ -490,27 +503,29 @@ export default function TiptapEditor({ id, initialContent }: TiptapEditorProps) 
           <button className ={styles.editorBox} onClick={() => editor.chain().focus().goToPreviousCell().run()}>
             Go to previous cell
           </button>
+          */}
+          {/* 테이블 관련 end*/}
           <button
             onClick={() => editor.chain().focus().setTextAlign('left').run()}
-            className={`bg-gray-200 w-[auto] h-[auto] p-[10px] rounded-[8px] ${editor.isActive({ textAlign: 'left' }) ? 'is-active' : ''}`}
+            className={`${editor.isActive({ textAlign: 'left' }) ? 'is-active' : ''}`}
           >
             Left
           </button>
           <button
             onClick={() => editor.chain().focus().setTextAlign('center').run()}
-            className={`bg-gray-200 w-[auto] h-[auto] p-[10px] rounded-[8px] ${editor.isActive({ textAlign: 'center' }) ? 'is-active' : ''}`}
+            className={`${editor.isActive({ textAlign: 'center' }) ? 'is-active' : ''}`}
           >
             Center
           </button>
           <button
             onClick={() => editor.chain().focus().setTextAlign('right').run()}
-            className={`bg-gray-200 w-[auto] h-[auto] p-[10px] rounded-[8px] ${editor.isActive({ textAlign: 'right' }) ? 'is-active' : ''}`}
+            className={`${editor.isActive({ textAlign: 'right' }) ? 'is-active' : ''}`}
           >
             Right
           </button>
           <button
             onClick={() => editor.chain().focus().setTextAlign('justify').run()}
-            className={`bg-gray-200 w-[auto] h-[auto] p-[10px] rounded-[8px] ${editor.isActive({ textAlign: 'justify' }) ? 'is-active' : ''}`}
+            className={`${editor.isActive({ textAlign: 'justify' }) ? 'is-active' : ''}`}
           >
             Justify
           </button>
@@ -532,7 +547,47 @@ export default function TiptapEditor({ id, initialContent }: TiptapEditorProps) 
             Toggle H2
           </button>
     </ButtonGroup>
-      <EditorContent editor={editor} className='tiptap'/>
+    <div className={styles.titleContainer}>
+      <input value={title||''} onChange={(e)=>setTitle(e.target.value)} placeholder='제목을 입력하세요'/>
+    </div>
+      <EditorContent editor={editor} className={styles.tiptap} />
+      <div>
+      <label>
+        <input
+          type="radio"
+          name="status"
+          value="draft"
+          checked={status === 'draft'}
+          onChange={handleChange}
+        />
+        Draft
+      </label>
+
+      <label>
+        <input
+          type="radio"
+          name="status"
+          value="scheduled"
+          checked={status === 'scheduled'}
+          onChange={handleChange}
+        />
+        Scheduled
+      </label>
+
+      <label>
+        <input
+          type="radio"
+          name="status"
+          value="published"
+          checked={status === 'published'}
+          onChange={handleChange}
+        />
+        Published
+      </label>
+
+      <p>현재 상태: <strong>{status}</strong></p>
+    </div>      
+      <button onClick={handleSave}>저장</button>
       <p>
         <strong>HTML Output:</strong>
       </p>

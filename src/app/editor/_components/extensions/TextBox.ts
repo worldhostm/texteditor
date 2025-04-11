@@ -1,8 +1,8 @@
 // extensions/TextBox.ts
-import { Node, mergeAttributes } from '@tiptap/core'
+import { Node, mergeAttributes , type Attributes} from '@tiptap/core'
 
 export interface TextBoxOptions {
-  HTMLAttributes: Record<string, any>
+  HTMLAttributes: Record<string, Attributes>
 }
 
 declare module '@tiptap/core' {

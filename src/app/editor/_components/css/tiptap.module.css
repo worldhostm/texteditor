@@ -1,5 +1,5 @@
 @media (max-width:768px) {
-  .tiptap, .control-group{
+  .tiptap, .control-group, .titleContainer{
     width: 100% !important;
   }
   .gethtml{
@@ -40,4 +40,66 @@
     margin-left: 20px;
   }
   
+  .titleContainer{
+    display: flex;
+    justify-content: baseline;
+    align-items: center;
+    height: 120px;
+    border: 1px solid #EAEAEA;
+    width: 1240px;
+  }
+  .titleContainer input {
+    border:  none;
+    outline:  none;
+    font-size: 30px; 
+    height: 80px;
+    margin-left: 40px;
+    width: 100%;
+  }
+
+
+  .tiptap{
+    border : 1px solid #eaeaea;
+    padding : 20px;
+    width: 1200px;
+    min-height: 50vh;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+  }
+  .ProseMirror{
+    width: 800px;
+    min-height: 50vh;
+    align-items: baseline !important;
+    display: unset !important;
+  }
+  .tiptap.ProseMirror > p{
+  }
   
+  .button-group *{
+    margin: 4px;
+  }
+  
+  .control-group{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .tiptap img{
+    width: 700px;
+  }
+  
+  .tiptap p:empty::before {
+    content: ' ';
+    display: inline-block;
+    height: 1em;
+  }
+
+  .control-group > * > button{
+    border: none;
+    outline: none;
+    background: none;
+  }

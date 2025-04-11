@@ -12,7 +12,6 @@ interface EmojiPickerProps {
   }
 }
 
-const emojiList: string[] = ['😀', '😂', '😍', '🤔', '👍', '🎉']
 
 export const EmojiPicker: React.FC<EmojiPickerProps> = ({ onSelect, position }) => {
     const handleEmojiSelect = (emoji: { native: string }) => {
@@ -35,6 +34,7 @@ export const EmojiPicker: React.FC<EmojiPickerProps> = ({ onSelect, position }) 
         data={data}
         onEmojiSelect={handleEmojiSelect}
         theme="light"
+        //light or dark
       />
       {/* {emojiList.map((emoji) => (
         <button

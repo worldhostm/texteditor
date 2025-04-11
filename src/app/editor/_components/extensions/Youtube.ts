@@ -1,5 +1,5 @@
 // extensions/YouTube.ts
-import { Node, mergeAttributes, Editor, RawCommands ,InputRule } from '@tiptap/core';
+import { Node, mergeAttributes,InputRule } from '@tiptap/core';
 
 export interface YouTubeOptions {
   allowFullscreen: boolean

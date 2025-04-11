@@ -1,6 +1,18 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --gray-800   : #25282B;
+  --gray-700   : #4D5053;
+  --gray-600   : #4D5053;
+  --gray-500   : #75787B;
+  --gray-400   : #9DA0A3;
+  --gray-300   : #C5C8CB;
+  --gray-200   : #EDF0F3;
+  --gray-100   : #F7FAFD;
+}
+body table {
+  border:1px solid #eaeaea;
 }
 
 @font-face {
@@ -38,6 +50,90 @@
   src: url('/fonts/Hana2-Regular.otf');
   font-weight: normal;
   font-style: normal;
+}
+
+.hana_bold {
+  font-family: 'Hana2-Bold', sans-serif;
+}
+
+.hana_cm {
+  font-family: 'Hana2-CM', sans-serif;
+}
+
+.hana_heavy {
+  font-family: 'Hana2-Heavy', sans-serif;
+}
+
+.hana_light {
+  font-family: 'Hana2-Light', sans-serif;
+}
+
+.hana_medium {
+  font-family: 'Hana2-Medium', sans-serif;
+}
+
+.hana_regular {
+  font-family: 'Hana2-Regular', sans-serif;
+}
+
+.headlineS{
+  font-size: 1.125rem !important;
+  line-height: 1.75rem !important;
+  /* font-size: 18px;
+  line-height: 28px ; */
+}
+.headlineM{
+    font-size: 24px ;
+    line-height: 36px ;
+    
+}
+.headlineL{
+    font-size : 32px !important;
+    line-height: 48px !important;
+}
+
+.titleS{
+    font-size: 14px ;
+    line-height: 20px ;
+    
+}
+.titleM{
+    font-size: 18px ;
+    line-height: 24px ;
+}
+.titleL{
+    font-size: 22px ;
+    line-height: 32px ;
+}
+
+.bodyXS{
+    font-size: 12px ;
+    line-height: 20px ;
+}
+.bodyS{
+  font-size : 14px;
+  line-height: 24px;
+} 
+.bodyM{
+    font-size: 16px ;
+    line-height: 28px ;
+}
+.bodyL{
+    font-size: 18px ;
+    line-height: 32px ;
+}
+
+.labelS{
+    font-size: 12px ;
+    line-height: 16px ;
+}
+.labelM{
+    font-size: 14px ;
+    line-height: 20px ;
+}
+.labelL{
+    font-size: 16px ;
+    line-height: 24px ;
 }
 
 @media (max-width:768px) {
@@ -119,104 +215,65 @@ a {
   }
 }
 
-.tiptap{
-  border : 1px solid #eaeaea;
-  padding : 20px;
-  width: 1200px;
+.tiptap[role="textbox"]{
+  width: 100%;
   min-height: 50vh;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-}
-.tiptap.ProseMirror{
-  width: 800px;
-  align-items: baseline !important;
-  display: unset !important;
-}
-.tiptap.ProseMirror > p{
-}
-.tiptap {
-  :first-child {
-    margin-top: 0;
-  }
-  /* Table-specific styling */
- .tiptap table {
-    border-collapse: collapse;
-    margin: 0;
-    overflow: hidden;
-    table-layout: fixed;
-    width: 700px;
-    border: 1px solid #ededed;
-
-    td,
-    th {
-      border: 1px solid #eaeaea;
-      box-sizing: border-box;
-      min-width: 1em;
-      padding: 6px 8px;
-      position: relative;
-      vertical-align: top;
-
-      > * {
-        margin-bottom: 0;
-      }
-    }
-
-    th {
-      background-color: var(--gray-1);
-      font-weight: bold;
-      text-align: left;
-    }
-
-    .selectedCell:after {
-      background: var(--gray-2);
-      content: "";
-      left: 0; right: 0; top: 0; bottom: 0;
-      pointer-events: none;
-      position: absolute;
-      z-index: 2;
-    }
-
-    .column-resize-handle {
-      background-color: var(--purple);
-      bottom: -2px;
-      pointer-events: none;
-      position: absolute;
-      right: -2px;
-      top: 0;
-      width: 4px;
-    }
-  }
-
-  .tableWrapper {
-    margin: 1.5rem 0;
-    overflow-x: auto;
-  }
-
-  &.resize-cursor {
-    cursor: ew-resize;
-    cursor: col-resize;
-  }
+  padding : 40px;
 }
 
-.button-group *{
-  margin: 4px;
-}
-
-.control-group{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-.tiptap img{
+.tiptap table {
+  border-collapse: collapse;
+  margin: 0;
+  overflow: hidden;
+  table-layout: fixed;
   width: 700px;
+  border: 1px solid #ededed;
+  td,
+  th {
+    border: 1px solid #eaeaea;
+    box-sizing: border-box;
+    min-width: 1em;
+    padding: 6px 8px;
+    position: relative;
+    vertical-align: top;
+
+    > * {
+      margin-bottom: 0;
+    }
+  }
+
+  th {
+    background-color: var(--gray-1);
+    font-weight: bold;
+    text-align: left;
+  }
+
+  .selectedCell:after {
+    background: var(--gray-2);
+    content: "";
+    left: 0; right: 0; top: 0; bottom: 0;
+    pointer-events: none;
+    position: absolute;
+    z-index: 2;
+  }
+
+  .column-resize-handle {
+    background-color: var(--purple);
+    bottom: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: -2px;
+    top: 0;
+    width: 4px;
+  }
 }
 
-.tiptap p:empty::before {
-  content: ' ';
-  display: inline-block;
-  height: 1em;
+.tableWrapper {
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+
+&.resize-cursor {
+  cursor: ew-resize;
+  cursor: col-resize;
 }
