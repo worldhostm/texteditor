@@ -10,7 +10,7 @@ interface Props {
 export default function Post({ id }: Props) {
   const [data, setData] = useState<string|''>('');
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/detail/${id}`)
+    fetch(`/api/detail/${id}`)
       .then(res => res.json())
       .then(data => {
         setData(data.content);

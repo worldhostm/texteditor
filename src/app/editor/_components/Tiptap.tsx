@@ -37,6 +37,11 @@ import styled from 'styled-components';
 import { EmojiCommand } from './extensions/EmojiCommand';
 import {EmojiPicker} from './EmojiPicker';
 import SVGIcon from '@/app/_components/SVGIcon';
+import { HighlightMenu } from '@/app/_components/HighlightMenu';
+import HardBreak from '@tiptap/extension-hard-break';
+import { useRouter } from 'next/navigation';
+import LoadingSpinner from '@/app/_components/LoadingSpinner';
+
 
 const emojis = ['😀', '😂', '😍', '😎', '😢', '😡', '👍', '🎉', '🔥']
 
@@ -66,11 +71,11 @@ interface Position {
 }
 
 export default function TiptapEditor() {
-
+  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
   const [showPicker, setShowPicker] = useState(false)
   const [position] = useState<Position>({ top: 0, left: 0 })
   const [status, setStatus] = useState<'draft'| 'scheduled'| 'published'>('draft'); // 예시로 string
-  
   const [title, setTitle] = useState('');
 
   const handleEmojiClick = (emoji: string) => {
@@ -214,6 +219,13 @@ export default function TiptapEditor() {
       Emoji.configure({
         emojis: gitHubEmojis,
       }),
+      HardBreak.extend({
+        addKeyboardShortcuts() {
+          return {
+            'Shift-Enter': () => this.editor.commands.setHardBreak(),
+          };
+        },
+      }),
     ],
     content:``,
   })
@@ -264,10 +276,16 @@ export default function TiptapEditor() {
       setShowPicker(false)
     }
 
+
     const handleSave = async () => {
+      setLoading(true);
       try {
         const res = await axios.post('/api/save', { title,content: editor.getHTML(), status});
-        console.log('✅ 저장 성공', res.data);
+        if(res.status <= 201 ){
+          setLoading(false);
+          //성공 시 홈으로
+          router.push('/home');
+        }
       } catch (err) {
         console.error('❌ 저장 실패', err);
       }
@@ -276,6 +294,10 @@ export default function TiptapEditor() {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setStatus(e.target.value as Status)
     }
+
+    const handleHighlightColor = (color: string) => {
+      editor.chain().focus().toggleHighlight({ color }).run();
+    };
 
   return (
     <div className={styles['control-group']}>
@@ -313,63 +335,21 @@ export default function TiptapEditor() {
               }
             }}
           >
-            유튜브 영상 삽입
+            <SVGIcon id="youtube-activity" />
           </button>
           <button
             onClick={() => editor.chain().focus().toggleBulletList().run()}
             className={editor.isActive('bulletList') ? 'is-active' : ''}
           >
-            Toggle bullet list 
-          </button>
-          <button
-            onClick={() => editor.chain().focus().splitListItem('listItem').run()}
-            disabled={!editor.can().splitListItem('listItem')}
-          >
-            Split list item
-          </button>
-          <button
-            onClick={() => editor.chain().focus().sinkListItem('listItem').run()}
-            disabled={!editor.can().sinkListItem('listItem')}
-          >
-            Sink list item
-          </button>
-          <button
-            onClick={() => editor.chain().focus().liftListItem('listItem').run()}
-            disabled={!editor.can().liftListItem('listItem')}
-          >
-            Lift list item
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            className={editor.isActive('orderedList') ? 'is-active' : ''}
-          >
-            Toggle ordered list
-          </button>
-          <button
-            onClick={() => editor.chain().focus().splitListItem('listItem').run()}
-            disabled={!editor.can().splitListItem('listItem')}
-          >
-            Split list item
-          </button>
-          <button
-            onClick={() => editor.chain().focus().sinkListItem('listItem').run()}
-            disabled={!editor.can().sinkListItem('listItem')}
-          >
-            Sink list item
-          </button>
-          <button
-            onClick={() => editor.chain().focus().liftListItem('listItem').run()}
-            disabled={!editor.can().liftListItem('listItem')}
-          >
-            Lift list item
+            <SVGIcon id="list-bullet"/>
           </button>
           <button
             onClick={() => editor.chain().focus().toggleUnderline().run()}
             className={editor.isActive('underline') ? 'is-active' : ''}
           >
-            Toggle underline
+            <SVGIcon id="underlined" />
           </button>
-          <button
+          {/* <button
             onClick={() => editor.chain().focus().setUnderline().run()}
             disabled={editor.isActive('underline')}
           >
@@ -380,80 +360,37 @@ export default function TiptapEditor() {
             disabled={!editor.isActive('underline')}
           >
             Unset underline
-          </button>
-          <button
+          </button> */}
+          {/* <button
             onClick={() => editor.chain().focus().toggleHighlight().run()}
             className={editor.isActive('highlight') ? 'is-active' : ''}
           >
-            Toggle highlight
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleHighlight({ color: '#ffc078' }).run()}
-            className={editor.isActive('highlight', { color: '#ffc078' }) ? 'is-active' : ''}
-          >
-            Orange
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleHighlight({ color: '#8ce99a' }).run()}
-            className={editor.isActive('highlight', { color: '#8ce99a' }) ? 'is-active' : ''}
-          >
-            Green
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleHighlight({ color: '#74c0fc' }).run()}
-            className={editor.isActive('highlight', { color: '#74c0fc' }) ? 'is-active' : ''}
-          >
-            Blue
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleHighlight({ color: '#b197fc' }).run()}
-            className={editor.isActive('highlight', { color: '#b197fc' }) ? 'is-active' : ''}
-          >
-            Purple
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleHighlight({ color: 'red' }).run()}
-            className={editor.isActive('highlight', { color: 'red' }) ? 'is-active' : ''}
-          >
-            Red (red)
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleHighlight({ color: '#ffa8a8' }).run()}
-            className={editor.isActive('highlight', { color: '#ffa8a8' }) ? 'is-active' : ''}
-          >
-            Red (#ffa8a8)
-          </button>
-          <button
+            <SVGIcon id="ink-highlighter"/>
+          </button> */}
+          <HighlightMenu
+            onSelect={handleHighlightColor}
+            isActive={editor.isActive('highlight')}
+            activeColor={editor.getAttributes('highlight')?.color}
+          />
+          {/* <button
             onClick={() => editor.chain().focus().unsetHighlight().run()}
             disabled={!editor.isActive('highlight')}
           >
             Unset highlight
-          </button>
+          </button> */}
         <button
             onClick={() => editor.chain().focus().toggleBold().run()}
             className={`bg-blue-500 text-white px-4 py-2 rounded ${editor.isActive('bold') ? 'is-active' : ''}`}
           >
-            Toggle bold
+            <SVGIcon id="bold" />
         </button>
         <button
             onClick={() => editor.chain().focus().toggleBlockquote().run()}
             className={editor.isActive('blockquote') ? 'is-active' : ''}
         >
-          Toggle blockquote
+          <SVGIcon id="format-quote" />
         </button>
-        <button
-            onClick={() => editor.chain().focus().setBlockquote().run()}
-            disabled={!editor.can().setBlockquote()}
-          >
-            Set blockquote
-          </button>
-          <button
-            onClick={() => editor.chain().focus().unsetBlockquote().run()}
-            disabled={!editor.can().unsetBlockquote()}
-          >
-            Unset blockquote
-          </button>
-        <button onClick={addImage}>Set image</button>
+        <button onClick={addImage}><SVGIcon id="format-image"/></button>
           <button
             onClick={() => editor.chain().focus().insertContent({
               type: 'textBox',
@@ -467,11 +404,11 @@ export default function TiptapEditor() {
             }
             className="bg-blue-500 text-white px-4 py-2 rounded"
           >
-            텍스트 박스 삽입
+            <SVGIcon id="text-box" />
          </button>
           <button className ={styles.editorBox}
             onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: false  }).run()}>
-            Insert table
+            <SVGIcon id="table" />
           </button>
           {/* 테이블 관련 start */}
           {/* <button className ={styles.editorBox} onClick={() => editor.chain().focus().addColumnBefore().run()}>
@@ -509,42 +446,55 @@ export default function TiptapEditor() {
             onClick={() => editor.chain().focus().setTextAlign('left').run()}
             className={`${editor.isActive({ textAlign: 'left' }) ? 'is-active' : ''}`}
           >
-            Left
+            <SVGIcon id="align-left"/>
           </button>
           <button
             onClick={() => editor.chain().focus().setTextAlign('center').run()}
             className={`${editor.isActive({ textAlign: 'center' }) ? 'is-active' : ''}`}
           >
-            Center
+            <SVGIcon id="align-center"/>
           </button>
           <button
             onClick={() => editor.chain().focus().setTextAlign('right').run()}
             className={`${editor.isActive({ textAlign: 'right' }) ? 'is-active' : ''}`}
           >
-            Right
-          </button>
-          <button
-            onClick={() => editor.chain().focus().setTextAlign('justify').run()}
-            className={`${editor.isActive({ textAlign: 'justify' }) ? 'is-active' : ''}`}
-          >
-            Justify
-          </button>
-          <button 
-          className={`bg-gray-200 w-[auto] h-[auto] p-[10px] rounded-[8px]`}
-          onClick={() => editor.chain().focus().unsetTextAlign().run()}>
-            Unset text align
+            <SVGIcon id="align-right"/>
           </button>
           <button
             onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
             className={`bg-gray-200 w-[auto] h-[auto] p-[10px] rounded-[8px]${editor.isActive({ level: 1 }) ? 'is-active' : ''}`}
           >
-            Toggle H1
+            <SVGIcon id="h1" />
           </button>
           <button
             onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
             className={`bg-gray-200 w-[auto] h-[auto] p-[10px] rounded-[8px]${editor.isActive({ level: 2 }) ? 'is-active' : ''}`}
           >
-            Toggle H2
+            <SVGIcon id="h2" />
+          </button>
+          <button
+            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+            className={`bg-gray-200 w-[auto] h-[auto] p-[10px] rounded-[8px]${editor.isActive({ level: 3 }) ? 'is-active' : ''}`}
+          >
+            <SVGIcon id="h3" />
+          </button>
+          <button
+            onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+            className={`bg-gray-200 w-[auto] h-[auto] p-[10px] rounded-[8px]${editor.isActive({ level: 4 }) ? 'is-active' : ''}`}
+          >
+            <SVGIcon id="h4" />
+          </button>
+          <button
+            onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
+            className={`bg-gray-200 w-[auto] h-[auto] p-[10px] rounded-[8px]${editor.isActive({ level: 5 }) ? 'is-active' : ''}`}
+          >
+            <SVGIcon id="h5" />
+          </button>
+          <button
+            onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
+            className={`bg-gray-200 w-[auto] h-[auto] p-[10px] rounded-[8px]${editor.isActive({ level: 6 }) ? 'is-active' : ''}`}
+          >
+            <SVGIcon id="h6" />
           </button>
     </ButtonGroup>
     <div className={styles.titleContainer}>
@@ -584,10 +534,10 @@ export default function TiptapEditor() {
         />
         Published
       </label>
-
       <p>현재 상태: <strong>{status}</strong></p>
     </div>      
       <button onClick={handleSave}>저장</button>
+      {loading && <LoadingSpinner />}
       <p>
         <strong>HTML Output:</strong>
       </p>
@@ -598,7 +548,10 @@ export default function TiptapEditor() {
         wordBreak: 'break-word'
       }}
       dangerouslySetInnerHTML={{ __html: editor.getHTML() }} />
-      <div>{editor.getHTML()}</div>
+      <div style={{
+        width:'100%',
+        wordBreak:'break-all'
+      }}>{editor.getHTML()}</div>
     </div>
   )
 }

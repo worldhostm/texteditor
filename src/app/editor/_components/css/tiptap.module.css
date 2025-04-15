@@ -1,12 +1,10 @@
-@media (max-width:768px) {
-  .tiptap, .control-group, .titleContainer{
-    width: 100% !important;
-  }
-  .gethtml{
-    padding : 0px 24px !important;
-  }
-  
+.tiptap, .control-group, .titleContainer, .titleContainer input{
+  width: 100% !important;
 }
+.gethtml{
+  padding : 0px 24px !important;
+}
+
 
 .control-group > *{
   font-family: 'Hana2-Regular' !important;
@@ -24,6 +22,8 @@
   }
 
   .control-group{
+    margin-top: 120px;
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -74,8 +74,6 @@
     align-items: baseline !important;
     display: unset !important;
   }
-  .tiptap.ProseMirror > p{
-  }
   
   .button-group *{
     margin: 4px;
@@ -92,11 +90,11 @@
     width: 700px;
   }
   
-  .tiptap p:empty::before {
+  /* .tiptap p:empty::before {
     content: ' ';
     display: inline-block;
     height: 1em;
-  }
+  } */
 
   .control-group > * > button{
     border: none;
