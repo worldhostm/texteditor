@@ -2,6 +2,7 @@
 
 import React from 'react';
 import styled from 'styled-components';
+import SVGIcon from './SVGIcon';
 
 const HeaderContainer = styled.div`
       display: flex;
@@ -19,15 +20,18 @@ export default function Header() {
     <HeaderContainer>
         <div style={{
             display:'flex',
-            justifyContent:'space-between'
+            justifyContent:'space-between',
+            alignItems:'center',
+            width:'100%',
         }}> 
-            <a href={'/home'}>로고</a>
+            <a href="/"><SVGIcon id="arrow-back"/></a>
             <div style={{
                 display:'flex',
                 gap:'12px'
             }}>
-                <a href='/editor'>editor</a>
-                <a href='/home'>home</a>
+                <a href="/"><SVGIcon id="menu"/></a>
+                {/* <a href='/editor'>editor</a>
+                <a href='/home'>home</a> */}
             </div>
         </div>
         <>

@@ -229,7 +229,7 @@ export default function TiptapEditor() {
     ],
     content:``,
   })
-
+//@todo S3에 맞게 변경
   const addImage = useCallback(() => {
     const url = window.prompt('URL')
 
