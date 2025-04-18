@@ -230,13 +230,24 @@ export default function TiptapEditor() {
     content:``,
   })
 //@todo S3에 맞게 변경
-  const addImage = useCallback(() => {
-    const url = window.prompt('URL');
+const addImage = useCallback(() => {
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.accept = 'image/*'
+  input.onchange = async () => {
+    const file = input.files?.[0]
+    if (!file) return
 
-    if (url) {
-      editor?.chain().focus().setImage({ src: url }).run()
-    }
-  }, [editor])
+    const blobUrl = URL.createObjectURL(file)
+
+    // 현재 에디터에 blob 이미지 삽입 (작성 중에는 이걸로 표시)
+    editor?.chain().focus().setImage({ src: blobUrl }).run()
+
+    // 별도로 업로드 목록에 저장해둘 수도 있음 (opt)
+    // setPendingImages(prev => [...prev, { blobUrl, file }])
+  }
+  input.click()
+}, [editor])
 
   const [thumbnail, setThumbnail] = useState<string | ArrayBuffer | null>('')
 
@@ -294,11 +305,54 @@ export default function TiptapEditor() {
       setShowPicker(false)
     }
 
+    const uploadToS3 = async (file: File): Promise<string> => {
+      const res = await fetch('/api/presign', {
+        method: 'POST',
+        body: JSON.stringify({
+          filename: file.name,
+          type: file.type,
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      })
+    
+      const { url, fields, publicUrl } = await res.json()
+    
+      const formData = new FormData()
+      Object.entries(fields).forEach(([key, val]) => formData.append(key, val as string))
+      formData.append('file', file)
+    
+      await fetch(url, {
+        method: 'POST',
+        body: formData,
+      })
+    
+      return publicUrl // 바로 삽입에 사용 가능
+    }
 
-    const handleSave = async () => {
-      setLoading(true);
+    const handleSubmit = async () => {
+      const html = editor?.getHTML()
+      if (!html) return
+    
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(html, 'text/html')
+      const imgElements = Array.from(doc.querySelectorAll('img[src^="blob:"]'))
+    
+      for (const imgele of imgElements) {
+        const img = imgele as HTMLImageElement
+        const blobUrl = img.src
+        const blob = await fetch(blobUrl).then(res => res.blob())
+        const file = new File([blob], `editor-${Date.now()}.jpg`, { type: blob.type })
+    
+        const s3Url = await uploadToS3(file) // ✅ presign 방식으로 업로드
+        img.src = s3Url // 변경!
+      }
+    
+      const finalContent = doc.body.innerHTML
+    
+      // 이제 서버로 저장
       try {
-        const res = await axios.post('/api/save', { title,content: editor.getHTML(), status, thumbnail});
+        // editor.getHTML()
+        const res = await axios.post('/api/save', { title,content: finalContent, status, thumbnail});
         if(res.status <= 201 ){
           setLoading(false);
           //성공 시 홈으로
@@ -307,7 +361,20 @@ export default function TiptapEditor() {
       } catch (err) {
         console.error('❌ 저장 실패', err);
       }
-    };
+    }
+    // const handleSave = async () => {
+    //   setLoading(true);
+    //   try {
+    //     const res = await axios.post('/api/save', { title,content: editor.getHTML(), status, thumbnail});
+    //     if(res.status <= 201 ){
+    //       setLoading(false);
+    //       //성공 시 홈으로
+    //       router.push('/home');
+    //     }
+    //   } catch (err) {
+    //     console.error('❌ 저장 실패', err);
+    //   }
+    // };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setStatus(e.target.value as Status)
@@ -556,7 +623,7 @@ export default function TiptapEditor() {
       </label>
       <p>현재 상태: <strong>{status}</strong></p>
     </div>      
-      <button onClick={handleSave}>저장</button>
+      <button onClick={handleSubmit}>저장</button>
       {loading && <LoadingSpinner />}
       <p>
         <strong>HTML Output:</strong>
