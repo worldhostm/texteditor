@@ -29,7 +29,7 @@ export default function Header() {
                 display:'flex',
                 gap:'12px'
             }}>
-                <a href="/"><SVGIcon id="menu"/></a>
+                <a href="/editor"><SVGIcon id="menu"/></a>
                 {/* <a href='/editor'>editor</a>
                 <a href='/home'>home</a> */}
             </div>

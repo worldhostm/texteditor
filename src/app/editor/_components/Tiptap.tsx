@@ -14,7 +14,7 @@ import History from '@tiptap/extension-history';
 import {YouTube} from './extensions/Youtube';
 
 import Image from '@tiptap/extension-image';
-import { useEditor, EditorContent } from '@tiptap/react'
+import { useEditor, EditorContent, ReactNodeViewRenderer } from '@tiptap/react'
 import Heading from '@tiptap/extension-heading';
 import Document from '@tiptap/extension-document';
 import Gapcursor from '@tiptap/extension-gapcursor';
@@ -41,6 +41,9 @@ import { HighlightMenu } from '@/app/_components/HighlightMenu';
 import HardBreak from '@tiptap/extension-hard-break';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/app/_components/LoadingSpinner';
+import { ImageWithCaption } from '../_components/extensions/ImageWithCaption';
+import FigureImageView from '../_components/extensions/FigureImageView';
+
 
 
 const emojis = ['😀', '😂', '😍', '😎', '😢', '😡', '👍', '🎉', '🔥']
@@ -226,9 +229,16 @@ export default function TiptapEditor() {
           };
         },
       }),
+      ImageWithCaption.extend({
+        addNodeView() {
+          return ReactNodeViewRenderer(FigureImageView)
+        },
+      }),
     ],
     content:``,
   })
+
+
 //@todo S3에 맞게 변경
 const addImage = useCallback(() => {
   const input = document.createElement('input')
@@ -241,7 +251,15 @@ const addImage = useCallback(() => {
     const blobUrl = URL.createObjectURL(file)
 
     // 현재 에디터에 blob 이미지 삽입 (작성 중에는 이걸로 표시)
-    editor?.chain().focus().setImage({ src: blobUrl }).run()
+    // editor?.chain().focus().setImage({ src: blobUrl }).run()
+    editor?.chain().focus().insertContent({
+      type: 'figureImage',
+      attrs: {
+        src: blobUrl,
+        alt: '테스트 이미지',
+        caption: '이미지 설명',
+      },
+    }).run();
 
     // 별도로 업로드 목록에 저장해둘 수도 있음 (opt)
     // setPendingImages(prev => [...prev, { blobUrl, file }])
@@ -305,29 +323,36 @@ const addImage = useCallback(() => {
       setShowPicker(false)
     }
 
+    const backUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}`;
+
     const uploadToS3 = async (file: File): Promise<string> => {
-      const res = await fetch('/api/presign', {
+      const res = await fetch(`${backUrl}/api/presign`, {
         method: 'POST',
         body: JSON.stringify({
           filename: file.name,
-          type: file.type,
+          contentType: file.type || 'image/jpeg',
         }),
         headers: { 'Content-Type': 'application/json' },
-      })
+      });
     
-      const { url, fields, publicUrl } = await res.json()
+      const { url, publicUrl } = await res.json();
     
-      const formData = new FormData()
-      Object.entries(fields).forEach(([key, val]) => formData.append(key, val as string))
-      formData.append('file', file)
+      const uploadRes = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': file.type || 'image/jpeg',
+        },
+        body: file,
+      });
     
-      await fetch(url, {
-        method: 'POST',
-        body: formData,
-      })
+      if (!uploadRes.ok) {
+        const errText = await uploadRes.text();
+        console.error('❌ S3 업로드 실패:', errText);
+        throw new Error('S3 upload failed');
+      }
     
-      return publicUrl // 바로 삽입에 사용 가능
-    }
+      return publicUrl;
+    };
 
     const handleSubmit = async () => {
       const html = editor?.getHTML()
@@ -341,7 +366,7 @@ const addImage = useCallback(() => {
         const img = imgele as HTMLImageElement
         const blobUrl = img.src
         const blob = await fetch(blobUrl).then(res => res.blob())
-        const file = new File([blob], `editor-${Date.now()}.jpg`, { type: blob.type })
+        const file = new File([blob], `text_editor-${Date.now()}.jpg`, { type: blob.type??'image/jpeg' })
     
         const s3Url = await uploadToS3(file) // ✅ presign 방식으로 업로드
         img.src = s3Url // 변경!
