@@ -231,13 +231,31 @@ export default function TiptapEditor() {
   })
 //@todo S3에 맞게 변경
   const addImage = useCallback(() => {
-    const url = window.prompt('URL')
+    const url = window.prompt('URL');
 
     if (url) {
       editor?.chain().focus().setImage({ src: url }).run()
     }
   }, [editor])
 
+  const [thumbnail, setThumbnail] = useState<string | ArrayBuffer | null>('')
+
+  const handleThumbnailUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // const file = e.target.files?.[0]
+    // if (!file) return
+    // const reader = new FileReader();
+    // reader.readAsDataURL(file);
+    // reader.onloadend = () => {
+    //   setThumbnail(reader.result);
+   	// };    
+    const file = e.target.files?.[0]
+    if (!file || !file.type.startsWith('image/')) return
+
+    const objectURL = URL.createObjectURL(file)
+    setThumbnail(objectURL);
+    // 업로드는 따로 처리
+    // uploadToServer(file)
+  }
     // 🔥 붙여넣기 감지 (한 번만 등록)
     useEffect(() => {
       if (!editor) return
@@ -280,7 +298,7 @@ export default function TiptapEditor() {
     const handleSave = async () => {
       setLoading(true);
       try {
-        const res = await axios.post('/api/save', { title,content: editor.getHTML(), status});
+        const res = await axios.post('/api/save', { title,content: editor.getHTML(), status, thumbnail});
         if(res.status <= 201 ){
           setLoading(false);
           //성공 시 홈으로
@@ -462,45 +480,47 @@ export default function TiptapEditor() {
           </button>
           <button
             onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-            className={`bg-gray-200 w-[auto] h-[auto] p-[10px] rounded-[8px]${editor.isActive({ level: 1 }) ? 'is-active' : ''}`}
+            className={`${editor.isActive({ level: 1 }) ? 'is-active' : ''}`}
           >
             <SVGIcon id="h1" />
           </button>
           <button
             onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            className={`bg-gray-200 w-[auto] h-[auto] p-[10px] rounded-[8px]${editor.isActive({ level: 2 }) ? 'is-active' : ''}`}
+            className={`${editor.isActive({ level: 2 }) ? 'is-active' : ''}`}
           >
             <SVGIcon id="h2" />
           </button>
           <button
             onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            className={`bg-gray-200 w-[auto] h-[auto] p-[10px] rounded-[8px]${editor.isActive({ level: 3 }) ? 'is-active' : ''}`}
+            className={`${editor.isActive({ level: 3 }) ? 'is-active' : ''}`}
           >
             <SVGIcon id="h3" />
           </button>
           <button
             onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
-            className={`bg-gray-200 w-[auto] h-[auto] p-[10px] rounded-[8px]${editor.isActive({ level: 4 }) ? 'is-active' : ''}`}
+            className={`${editor.isActive({ level: 4 }) ? 'is-active' : ''}`}
           >
             <SVGIcon id="h4" />
           </button>
           <button
             onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
-            className={`bg-gray-200 w-[auto] h-[auto] p-[10px] rounded-[8px]${editor.isActive({ level: 5 }) ? 'is-active' : ''}`}
+            className={`${editor.isActive({ level: 5 }) ? 'is-active' : ''}`}
           >
             <SVGIcon id="h5" />
           </button>
           <button
             onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
-            className={`bg-gray-200 w-[auto] h-[auto] p-[10px] rounded-[8px]${editor.isActive({ level: 6 }) ? 'is-active' : ''}`}
+            className={`${editor.isActive({ level: 6 }) ? 'is-active' : ''}`}
           >
             <SVGIcon id="h6" />
           </button>
+          <input type="file" onChange={handleThumbnailUpload} style={{color:'black'}} />
     </ButtonGroup>
     <div className={styles.titleContainer}>
       <input value={title||''} onChange={(e)=>setTitle(e.target.value)} placeholder='제목을 입력하세요'/>
     </div>
       <EditorContent editor={editor} className={styles.tiptap} />
+      {thumbnail&& <img src={typeof thumbnail === 'string' ? thumbnail : ''} alt="썸네일 미리보기" style={{width:200,height:200}}/>}
       <div>
       <label>
         <input
@@ -512,7 +532,7 @@ export default function TiptapEditor() {
         />
         Draft
       </label>
-
+      
       <label>
         <input
           type="radio"
