@@ -1,5 +1,4 @@
 
-@media (max-width:1024px) {
     .container{
         width: 100%;
         min-height: 70px;
@@ -20,10 +19,10 @@
         width: 30%;
         height: auto;
         min-height: 70px;
-        /* background-image: url('/default_service.png'); */
+        background-image: url('/default_service.png');
         background-size: cover;
         background-repeat: no-repeat;
-        aspect-ratio: 300/180;
+        aspect-ratio: 375/200;
     }
     .tileText  {
         width: 70%;
@@ -41,23 +40,41 @@
 
     /* 슬라이드 카드 css 따로 */
     .container_card{
-
+        width: 100%;
+        padding : 12px;
     }
     .container_card > a{
         display: flex;
         flex-direction: column;
     }
     .tileimg_card{
+        padding : calc(12/375*100vw) ;
+        display: flex;
+        flex-direction: column;
+        gap: calc(8/375*100vw);
+        /* align-items: center; */
+        /* justify-content: center; */
         border-radius: 20px;
-        width: 100%;
-        height: auto;
         min-height: 70px;
-        background-image: url('/default_service.png');
-        background-size: cover;
-        background-repeat: no-repeat;
-        aspect-ratio: 3/2;
+        aspect-ratio: 108/140;
+        background-color: var(--primary-50);
     }
     .regDate_card{
 
     }
-}
+    .title_card{
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        align-self: stretch;
+    }
+    .tileText_card{
+
+    }
+    .iconContainer{
+        width: 100%;
+        display: flex;
+
+    }

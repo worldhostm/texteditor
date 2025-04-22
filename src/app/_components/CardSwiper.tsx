@@ -81,14 +81,14 @@ export default function CardSwiper({data}:Props) {
 
   return (
   <Swiper
-      slidesPerView={2}
+      slidesPerView={3}
       // onSlideChange={() => console.log('slide change')}
       // onSwiper={(swiper) => console.log(swiper)}
       modules={[Grid]}
       navigation={false}
     >
       {data.map((contents, index) => (
-        <SwiperSlide  
+        <SwiperSlide
           key={`${contents.title}$`+index}
           style={{
             marginLeft:'8px'
@@ -97,8 +97,8 @@ export default function CardSwiper({data}:Props) {
           <ContentTile
           id={contents.id}
           idx={index} 
-          thumbnail={`/img/t${index+1}.jpg`} 
-          title={contents.title} 
+          thumbnail={contents.thumbnail ?`/img/t${index+1}.jpg`:`default_service.png`} 
+          title={contents.title}
           regDate={contents.regDate}
           isCard={true}
           />

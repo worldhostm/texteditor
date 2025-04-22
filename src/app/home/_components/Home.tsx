@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import ContentTile from './ContentTile'
 import CardSwiper, { Content } from '@/app/_components/CardSwiper';
+import SVGIcon from '@/app/_components/SVGIcon';
 // const sampleData: Content[] = [
 //     {
 //       title: 'React 상태 관리 제대로 이해하기',
@@ -56,29 +57,67 @@ export default function Home() {
         });
         if(res.ok){
             const response = await res.json()
-            console.info(response);
             setData(response);
         }
       }
-
       fetchData();
-
       return () => {}
     }, [])
     
   return (
     <div style={{
-      padding : '40px'
     }}>
-        <CardSwiper data={data}/>
+        <div style={{
+            display:'flex',
+            flexDirection:'column',
+            alignItems:'center',
+            width:'100%',
+            height:'calc(100vw/375*250)',
+            // borderBottomLeftRadius:'60%',
+            // borderBottomRightRadius:'60%',
+            backgroundColor:'var(--primary-500)'
+          }}>
+            <div style={{marginTop:'42px', marginBottom:'32px', color:'white'}}>“은행 방문 보다 쉬운 생활 금융 팁”</div>
+          <CardSwiper data={data}/>
+        </div>
+        <div style={{
+          width:'100%',
+          height:'calc(100vw/375*80)',
+          backgroundColor:'var(--primary-500)',
+          borderBottomLeftRadius: '100%',
+          borderBottomRightRadius:'100%',
+          color:'var(--primary-300)',
+          display:'flex',
+          alignItems:'center',
+          justifyContent:'center',
+          gap:'calc(100vw/375*7)'
+        }}>
+          <SVGIcon id="swipe"/>
+          카드를 스크롤 해보세요
+        </div>
+        <div 
+        className={''}
+        style={{
+          display:'flex',
+          justifyContent:'center',
+          flexDirection:'column',
+          alignItems:'center',
+          marginTop:'36px'
+        }}
+        >
+          <div className='titleM' style={{color:'var(--primary-900)'}}>새로운 콘텐츠</div>
+          <div className='' style={{color:'var(--gray-500)'}}>미리 알아두면 유익한 최신 금융 정보</div>
+        </div>
         {
             data.map((contents:Content,index)=> <ContentTile 
-                                              id={contents.id} 
-                                              key={contents.title +'$$$' +index} 
-                                              idx={index} 
-                                              thumbnail={`/img/t${index+1}.jpg`} 
-                                              title={contents.title} 
-                                              regDate={contents.regDate}/>)
+                                                    id={contents.id} 
+                                                    key={contents.title +'$$$' +index} 
+                                                    idx={index} 
+                                                    thumbnail={contents.thumbnail}
+                                                    title={contents.title} 
+                                                    regDate={contents.regDate}
+                                                    isCard={false}
+                                                  />)
         }
     </div>
   )

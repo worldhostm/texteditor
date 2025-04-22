@@ -355,6 +355,10 @@ const addImage = useCallback(() => {
     };
 
     const handleSubmit = async () => {
+      if(!title){
+        alert('제목을 입력하세요 !')
+        return;
+      }
       const html = editor?.getHTML()
       if (!html) return
     
@@ -414,6 +418,7 @@ const addImage = useCallback(() => {
     <ButtonGroup>
           <button
               onClick={() => setShowPicker(prev => !prev)}
+              // style={{background:'black'}}
             >
               <SVGIcon id="sentiment-satisfied" />
             </button>
@@ -606,13 +611,16 @@ const addImage = useCallback(() => {
           >
             <SVGIcon id="h6" />
           </button>
-          <input type="file" onChange={handleThumbnailUpload} style={{color:'black'}} />
+          <label htmlFor='thumbnail'>
+            <SVGIcon id="format-thumbnail" />
+            <input type="file" id="thumbnail" className={styles.thumbnailUpload} onChange={handleThumbnailUpload} style={{color:'black'}} />
+          </label>
     </ButtonGroup>
     <div className={styles.titleContainer}>
       <input value={title||''} onChange={(e)=>setTitle(e.target.value)} placeholder='제목을 입력하세요'/>
     </div>
       <EditorContent editor={editor} className={styles.tiptap} />
-      {thumbnail&& <img src={typeof thumbnail === 'string' ? thumbnail : ''} alt="썸네일 미리보기" style={{width:200,height:200}}/>}
+      {thumbnail&& <img src={typeof thumbnail === 'string' ? thumbnail : ''} alt="썸네일 미리보기" style={{width:'auto',height:'auto', maxWidth:'300px', maxHeight:'300px'}}/>}
       <div>
       <label>
         <input

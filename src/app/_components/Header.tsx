@@ -13,7 +13,7 @@ const HeaderContainer = styled.div`
       width:100%
       height: auto;
       font-size : 24px;
-      padding : 0px 40px;
+      padding : 0px 20px;
 `
 export default function Header() {
   return (
@@ -24,18 +24,18 @@ export default function Header() {
             alignItems:'center',
             width:'100%',
         }}> 
-            <a href="/"><SVGIcon id="arrow-back"/></a>
+            <a href="/"><SVGIcon width={18} height={18} isResponsive={true} id="arrow-back"/></a>
             <div style={{
                 display:'flex',
                 gap:'12px'
             }}>
-                <a href="/editor"><SVGIcon id="menu"/></a>
+                <a href="/editor"><SVGIcon id="menu" width={18} height={18} isResponsive={true} /></a>
                 {/* <a href='/editor'>editor</a>
                 <a href='/home'>home</a> */}
             </div>
         </div>
         <>
-            <div style={{
+            {/* <div style={{
                 display:'flex',
                 justifyContent:'center',
                 flexDirection:'column',
@@ -44,7 +44,7 @@ export default function Header() {
             }}>
                 <span className='hana_bold'>Origineer x 하나은행의 콘텐츠</span>
                 <div>하나 오리진은 하나 은행과 다양한 콘텐츠를 다룹니다</div>
-            </div>
+            </div> */}
         </>
     </HeaderContainer>
   )

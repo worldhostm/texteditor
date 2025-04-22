@@ -13,12 +13,24 @@ interface Props {
 }
 
 export default function RichContentRenderer({ html }: Props) {
+  console.info(html);
   const [safeHtml, setSafeHtml] = useState<string>('');
-
   useEffect(() => {
     // 클라이언트에서만 DOMPurify import
     import('dompurify').then((DOMPurify) => {
-      setSafeHtml(DOMPurify.default.sanitize(html)); // ✅ 여기서 default로 접근!
+      const purified = DOMPurify.default.sanitize(html, {
+        ADD_TAGS: ['iframe'],
+        ADD_ATTR: [
+          'allow',
+          'allowfullscreen',
+          'frameborder',
+          'scrolling',
+          'src',
+          'width',
+          'height',
+        ],
+      });
+      setSafeHtml(purified);
     });
   }, [html]);
   const options: HTMLReactParserOptions = {
@@ -49,5 +61,18 @@ export default function RichContentRenderer({ html }: Props) {
     },
   };
 
-  return <div>{parse(safeHtml, options)}</div>;
+  return <div style={{ 
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop:'120px',
+  }}>
+            <div style={{
+              width: '700px',
+              height:'auto',
+              minHeight:'700px'
+            }}>
+              {parse(safeHtml, options)}</div>
+         </div>
 }
