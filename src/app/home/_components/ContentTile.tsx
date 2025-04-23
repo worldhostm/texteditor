@@ -13,14 +13,13 @@ interface Props{
 }
 const date = new Date();
 const today = date.getDate();
-console.info(today);
 export default function ContentTile({id,idx,thumbnail,title,regDate='2024.04.02', isCard}:Props) {
   return (
     !isCard
     ?
     <div className={`${styles.container}`} key={title + idx}>
         <a href={`/posts/${id}`}>
-            <div className={`${styles.tileimg}`} style={{backgroundImage:`url(${!thumbnail ? `/default_service.png`:thumbnail})`}}></div>
+            <div className={`${styles.tileimg}`} style={{backgroundImage:`url('${thumbnail}')`}}></div>
             <div className={`${styles.tileText}`}>
               <div className={`${styles.title} bodyS`}>{title ? title : '제목없음'}</div>
                 <div className={`${styles.regDate} bodyXS`}>{regDate ? regDate : ''}</div>
@@ -31,7 +30,7 @@ export default function ContentTile({id,idx,thumbnail,title,regDate='2024.04.02'
     <div className={`${styles.container_card}`} key={title + idx}>
       <div className={`${styles.tileimg_card}`}>
         <div className={styles.iconContainer}><SVGIcon id="sentiment-satisfied" isResponsive={true}/></div>
-        <div className={`${styles.title_card} titleS`}>{title}</div>
+        <div className={`${styles.title_card} titleS bold`}>{title}</div>
         <div className={`${styles.regDate_card} bodyXS`}>아티클 읽기</div>
       </div>
     </div>

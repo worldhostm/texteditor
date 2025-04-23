@@ -13,7 +13,6 @@ interface Props {
 }
 
 export default function RichContentRenderer({ html }: Props) {
-  console.info(html);
   const [safeHtml, setSafeHtml] = useState<string>('');
   useEffect(() => {
     // 클라이언트에서만 DOMPurify import

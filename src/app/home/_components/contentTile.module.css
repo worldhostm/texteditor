@@ -19,10 +19,11 @@
         width: 30%;
         height: auto;
         min-height: 70px;
-        background-image: url('/default_service.png');
+        /* background-image: url('/default_service.png'); */
         background-size: cover;
         background-repeat: no-repeat;
         aspect-ratio: 375/200;
+        background-color: var(--primary-50);
     }
     .tileText  {
         width: 70%;

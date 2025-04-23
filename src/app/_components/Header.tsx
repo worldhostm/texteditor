@@ -23,13 +23,16 @@ export default function Header() {
             justifyContent:'space-between',
             alignItems:'center',
             width:'100%',
+            height:'calc(100vw/375*52)'
+
         }}> 
             <a href="/"><SVGIcon width={18} height={18} isResponsive={true} id="arrow-back"/></a>
+            <a href={`/`} className='titleS pretendard-regular'>하나 콘텐츠 뷰어</a>
             <div style={{
                 display:'flex',
                 gap:'12px'
             }}>
-                <a href="/editor"><SVGIcon id="menu" width={18} height={18} isResponsive={true} /></a>
+            <a href="/editor"><SVGIcon id="menu" width={18} height={18} isResponsive={true} /></a>
                 {/* <a href='/editor'>editor</a>
                 <a href='/home'>home</a> */}
             </div>

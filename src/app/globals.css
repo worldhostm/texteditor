@@ -24,6 +24,15 @@
   --primary-gradient: linear-gradient(270deg, #276351 0%, #00866B 50%, #276351 100%);
 }
 
+@keyframes shake {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX(-5px); }
+  40%  { transform: translateX(5px); }
+  60%  { transform: translateX(-5px); }
+  80%  { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+
 body table {
   border:1px solid #eaeaea;
 }
@@ -32,41 +41,138 @@ body > img{
   aspect-ratio: 300/200;
 }
 @font-face {
+  font-family: 'Pretendard-Black';
+  src: url('/fonts/pretendard/Pretendard-Black.otf');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Pretendard-Bold';
+  src: url('/fonts/pretendard/Pretendard-Bold.otf');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Pretendard-ExtraBold';
+  src: url('/fonts/pretendard/Pretendard-ExtraBold.otf');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Pretendard-ExtraLight';
+  src: url('/fonts/pretendard/Pretendard-ExtraLight.otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pretendard-Light';
+  src: url('/fonts/pretendard/Pretendard-Light.otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pretendard-Regular';
+  src: url('/fonts/pretendard/Pretendard-Regular.otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pretendard-Medium';
+  src: url('/fonts/pretendard/Pretendard-Medium.otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pretendard-SemiBold';
+  src: url('/fonts/pretendard/Pretendard-SemiBold.otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pretendard-Thin';
+  src: url('/fonts/pretendard/Pretendard-Thin.otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
   font-family: 'Hana2-Bold';
-  src: url('/fonts/Hana2-Bold.otf');
+  src: url('/fonts/hana/Hana2-Bold.otf');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: 'Hana2-CM';
-  src: url('/fonts/Hana2-CM.otf');
+  src: url('/fonts/hana/Hana2-CM.otf');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: 'Hana2-Heavy';
-  src: url('/fonts/Hana2-Heavy.otf');
+  src: url('/fonts/hana/Hana2-Heavy.otf');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: 'Hana2-Light';
-  src: url('/fonts/Hana2-Light.otf');
+  src: url('/fonts/hana/Hana2-Light.otf');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: 'Hana2-Medium';
-  src: url('/fonts/Hana2-Medium.otf');
+  src: url('/fonts/hana/Hana2-Medium.otf');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: 'Hana2-Regular';
-  src: url('/fonts/Hana2-Regular.otf');
+  src: url('/fonts/hana/Hana2-Regular.otf');
   font-weight: normal;
   font-style: normal;
 }
+
+.pretendard_black {
+  font-family: 'Pretendard-Black';
+}
+
+.pretendard_bold {
+  font-family: 'Pretendard-Bold';
+}
+
+.pretendard_extrabold {
+  font-family: 'Pretendard-ExtraBold';
+}
+
+.pretendard_extralight {
+  font-family: 'Pretendard-ExtraLight';
+}
+
+.pretendard_light {
+  font-family: 'Pretendard-Light';
+}
+
+.pretendard_regular {
+  font-family: 'Pretendard-Regular';
+}
+
+.pretendard_medium {
+  font-family: 'Pretendard-Medium';
+}
+
+.pretendard_semibold {
+  font-family: 'Pretendard-SemiBold';
+}
+
+.pretendard_thin {
+  font-family: 'Pretendard-Thin';
+}
+
 
 .hana_bold {
   font-family: 'Hana2-Bold', sans-serif;
@@ -92,6 +198,8 @@ body > img{
   font-family: 'Hana2-Regular', sans-serif;
 }
 
+
+
 .headlineS{
   font-size: 1.125rem !important;
   line-height: 1.75rem !important;
@@ -101,7 +209,6 @@ body > img{
 .headlineM{
     font-size: 24px ;
     line-height: 36px ;
-    
 }
 .headlineL{
     font-size : 32px !important;
@@ -113,13 +220,14 @@ body > img{
     line-height: calc(20/375*100vw);
     
 }
-.titleM{
-    font-size: 18px ;
-    line-height: 24px ;
+.titleM {
+  font-size: calc((100vw / 375) * 18);
+  line-height: calc((100vw / 375) * 24);
 }
-.titleL{
-    font-size: 22px ;
-    line-height: 32px ;
+
+.titleL {
+  font-size: calc((100vw / 375) * 22);
+  line-height: calc((100vw / 375) * 32);
 }
 
 .bodyXS{
@@ -127,29 +235,32 @@ body > img{
     line-height: calc((100vw / 375) * 20) !important;
 }
 .bodyS{
-  font-size : 14px;
-  line-height: 24px;
+  font-size : calc((100vw / 375) * 14);
+  line-height: calc((100vw / 375) * 24);
 } 
-.bodyM{
-    font-size: 16px ;
-    line-height: 28px ;
-}
-.bodyL{
-    font-size: 18px ;
-    line-height: 32px ;
+.bodyM {
+  font-size: calc((100vw / 375) * 16);
+  line-height: calc((100vw / 375) * 28);
 }
 
-.labelS{
-    font-size: 12px ;
-    line-height: 16px ;
+.bodyL {
+  font-size: calc((100vw / 375) * 18);
+  line-height: calc((100vw / 375) * 32);
 }
-.labelM{
-    font-size: 14px ;
-    line-height: 20px ;
+
+.labelS {
+  font-size: calc((100vw / 375) * 12);
+  line-height: calc((100vw / 375) * 16);
 }
-.labelL{
-    font-size: 16px ;
-    line-height: 24px ;
+
+.labelM {
+  font-size: calc((100vw / 375) * 14);
+  line-height: calc((100vw / 375) * 20);
+}
+
+.labelL {
+  font-size: calc((100vw / 375) * 16);
+  line-height: calc((100vw / 375) * 24);
 }
 
 @media (max-width:768px) {
@@ -300,4 +411,19 @@ a {
   width: calc(108/375*100vw) !important;
   height: calc(140/375*100vw) !important;
   aspect-ratio: 108/140 !important;                                                                                                                                                          
+}
+
+.shake{
+  animation: 2s shake infinite;
+}
+
+.bold{
+  font-weight: bold;
+}
+
+/* 선택한 셀 색 css */
+.ProseMirror td.selectedCell,
+.ProseMirror th.selectedCell {
+  background-color: rgba(0, 123, 255, 0.2); /* 하이라이트 색 */
+  outline: 2px solid rgba(0, 123, 255, 0.5); /* 테두리 강조 */
 }

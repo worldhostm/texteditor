@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import ContentTile from './ContentTile'
 import CardSwiper, { Content } from '@/app/_components/CardSwiper';
 import SVGIcon from '@/app/_components/SVGIcon';
+import styles from './home.module.css';
 // const sampleData: Content[] = [
 //     {
 //       title: 'React 상태 관리 제대로 이해하기',
@@ -92,21 +93,14 @@ export default function Home() {
           justifyContent:'center',
           gap:'calc(100vw/375*7)'
         }}>
-          <SVGIcon id="swipe"/>
+          <SVGIcon id="swipe" className='shake'/>
           카드를 스크롤 해보세요
         </div>
         <div 
-        className={''}
-        style={{
-          display:'flex',
-          justifyContent:'center',
-          flexDirection:'column',
-          alignItems:'center',
-          marginTop:'36px'
-        }}
+        className={styles.contentContainer}
         >
-          <div className='titleM' style={{color:'var(--primary-900)'}}>새로운 콘텐츠</div>
-          <div className='' style={{color:'var(--gray-500)'}}>미리 알아두면 유익한 최신 금융 정보</div>
+          <div className='titleM pretendard_bold' style={{color:'var(--primary-900)'}}>새로운 콘텐츠</div>
+          <div className='bodyS pretendard_regular' style={{color:'var(--gray-500)'}}>미리 알아두면 유익한 최신 금융 정보</div>
         </div>
         {
             data.map((contents:Content,index)=> <ContentTile 

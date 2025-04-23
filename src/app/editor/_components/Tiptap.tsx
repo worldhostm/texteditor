@@ -95,6 +95,7 @@ export default function TiptapEditor() {
       Highlight.configure({ multicolor: true }),
       Italic,
       History,
+      Gapcursor,
       OrderedList, ListItem,Strike,Subscript,Superscript,Underline,BulletList,
       Link.configure({
         openOnClick: false,
@@ -267,7 +268,8 @@ const addImage = useCallback(() => {
   input.click()
 }, [editor])
 
-  const [thumbnail, setThumbnail] = useState<string | ArrayBuffer | null>('')
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | ArrayBuffer | null>('')
+  const [thumbnail, setThumbnail] = useState<File | null>(null);
 
   const handleThumbnailUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     // const file = e.target.files?.[0]
@@ -279,9 +281,11 @@ const addImage = useCallback(() => {
    	// };    
     const file = e.target.files?.[0]
     if (!file || !file.type.startsWith('image/')) return
-
+    // 파일 상태값 세팅
+    setThumbnail(file);
     const objectURL = URL.createObjectURL(file)
-    setThumbnail(objectURL);
+    // 썸네일 스트링값 세팅
+    setThumbnailPreview(objectURL);
     // 업로드는 따로 처리
     // uploadToServer(file)
   }
@@ -324,7 +328,8 @@ const addImage = useCallback(() => {
     }
 
     const backUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}`;
-
+    
+    // 텍스트 에디터 내의 이미지를 s3에 업로드
     const uploadToS3 = async (file: File): Promise<string> => {
       const res = await fetch(`${backUrl}/api/presign`, {
         method: 'POST',
@@ -354,6 +359,37 @@ const addImage = useCallback(() => {
       return publicUrl;
     };
 
+    // 썸네일을 s3에 업로드
+    const uploadThumbnailToS3 = async (file: File | null): Promise<string> => {
+      const res = await fetch(`${backUrl}/api/presign`, {
+        method: 'POST',
+        body: JSON.stringify({
+          filename: `thumbnail/${Date.now()}-${file?.name}`, // 썸네일 전용 경로
+          contentType: file?.type || 'image/jpeg',
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+    
+      const { url, publicUrl } = await res.json();
+    
+      const uploadRes = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': file?.type || 'image/jpeg',
+        },
+        body: file,
+      });
+    
+      if (!uploadRes.ok) {
+        const errText = await uploadRes.text();
+        console.error('❌ 썸네일 S3 업로드 실패:', errText);
+        throw new Error('Thumbnail S3 upload failed');
+      }
+    
+      return publicUrl;
+    };
+    
+
     const handleSubmit = async () => {
       if(!title){
         alert('제목을 입력하세요 !')
@@ -377,11 +413,11 @@ const addImage = useCallback(() => {
       }
     
       const finalContent = doc.body.innerHTML
-    
+      const thumbnail_S3 = await uploadThumbnailToS3(thumbnail);
       // 이제 서버로 저장
       try {
         // editor.getHTML()
-        const res = await axios.post('/api/save', { title,content: finalContent, status, thumbnail});
+        const res = await axios.post('/api/save', { title,content: finalContent, status, thumbnail:thumbnail_S3});
         if(res.status <= 201 ){
           setLoading(false);
           //성공 시 홈으로
@@ -525,6 +561,7 @@ const addImage = useCallback(() => {
             onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: false  }).run()}>
             <SVGIcon id="table" />
           </button>
+          <button className ={styles.editorBox} onClick={() => editor.chain().focus().mergeCells().run()}><SVGIcon id='cell-merge' /></button>
           {/* 테이블 관련 start */}
           {/* <button className ={styles.editorBox} onClick={() => editor.chain().focus().addColumnBefore().run()}>
             Add column before
@@ -535,7 +572,6 @@ const addImage = useCallback(() => {
           <button className ={styles.editorBox} onClick={() => editor.chain().focus().addRowAfter().run()}>Add row after</button>
           <button className ={styles.editorBox} onClick={() => editor.chain().focus().deleteRow().run()}>Delete row</button>
           <button className ={styles.editorBox} onClick={() => editor.chain().focus().deleteTable().run()}>Delete table</button>
-          <button className ={styles.editorBox} onClick={() => editor.chain().focus().mergeCells().run()}>Merge cells</button>
           <button className ={styles.editorBox} onClick={() => editor.chain().focus().splitCell().run()}>Split cell</button>
           <button className ={styles.editorBox} onClick={() => editor.chain().focus().toggleHeaderColumn().run()}>
             Toggle header column
@@ -620,7 +656,7 @@ const addImage = useCallback(() => {
       <input value={title||''} onChange={(e)=>setTitle(e.target.value)} placeholder='제목을 입력하세요'/>
     </div>
       <EditorContent editor={editor} className={styles.tiptap} />
-      {thumbnail&& <img src={typeof thumbnail === 'string' ? thumbnail : ''} alt="썸네일 미리보기" style={{width:'auto',height:'auto', maxWidth:'300px', maxHeight:'300px'}}/>}
+      {thumbnailPreview&& <img src={typeof thumbnailPreview === 'string' ? thumbnailPreview : ''} alt="썸네일 미리보기" style={{width:'auto',height:'auto', maxWidth:'300px', maxHeight:'300px'}}/>}
       <div>
       <label>
         <input
