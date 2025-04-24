@@ -66,42 +66,22 @@ export default function Home() {
     }, [])
     
   return (
-    <div style={{
-    }}>
-        <div style={{
-            display:'flex',
-            flexDirection:'column',
-            alignItems:'center',
-            width:'100%',
-            height:'calc(100vw/375*250)',
-            // borderBottomLeftRadius:'60%',
-            // borderBottomRightRadius:'60%',
-            backgroundColor:'var(--primary-500)'
-          }}>
-            <div style={{marginTop:'42px', marginBottom:'32px', color:'white'}}>“은행 방문 보다 쉬운 생활 금융 팁”</div>
+    <div className={`${styles.container}`}>
+        <div className={`${styles._container}`}>
+            <div className={`${styles.headerText} titleM`}>“은행 방문 보다 쉬운 생활 금융 팁”</div>
           <CardSwiper data={data}/>
         </div>
-        <div style={{
-          width:'100%',
-          height:'calc(100vw/375*80)',
-          backgroundColor:'var(--primary-500)',
-          borderBottomLeftRadius: '100%',
-          borderBottomRightRadius:'100%',
-          color:'var(--primary-300)',
-          display:'flex',
-          alignItems:'center',
-          justifyContent:'center',
-          gap:'calc(100vw/375*7)'
-        }}>
+        <div className={`${styles.radi_container} bodyS`}>
           <SVGIcon id="swipe" className='shake'/>
           카드를 스크롤 해보세요
         </div>
         <div 
-        className={styles.contentContainer}
+        className={styles.underContainer}
         >
           <div className='titleM pretendard_bold' style={{color:'var(--primary-900)'}}>새로운 콘텐츠</div>
           <div className='bodyS pretendard_regular' style={{color:'var(--gray-500)'}}>미리 알아두면 유익한 최신 금융 정보</div>
         </div>
+        <div className={`${styles.underContainer_upper}`}>
         {
             data.map((contents:Content,index)=> <ContentTile 
                                                     id={contents.id} 
@@ -113,6 +93,7 @@ export default function Home() {
                                                     isCard={false}
                                                   />)
         }
+        </div>
     </div>
   )
 }

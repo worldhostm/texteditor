@@ -60,17 +60,14 @@ export default function RichContentRenderer({ html }: Props) {
     },
   };
 
-  return <div style={{ 
-      width: '100%',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginTop:'120px',
-  }}>
+  return <div className='contentRender'>
             <div style={{
               width: '700px',
               height:'auto',
-              minHeight:'700px'
+              minHeight:'700px',
+              display:'flex',
+              flexDirection:'column',
+              alignItems:'center'
             }}>
               {parse(safeHtml, options)}</div>
          </div>

@@ -1,4 +1,43 @@
-.contentContainer{
+.container{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+._container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    height: calc(100vw / 375 * 250);
+    background-color: var(--primary-500);
+}
+
+.headerText{
+    margin-top: calc(100vw/375 * 42);
+    margin-bottom:calc(100vw/375 * 32);
+    color:white;
+}
+.radi_container{
+    width: 100%;
+    max-width: 1200px;
+    height: calc(100vw / 375 * 80);
+    background-color: var(--primary-500);
+    border-bottom-left-radius: 100%;
+    border-bottom-right-radius: 100%;
+    color: var(--primary-300);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(100vw / 375 * 7);
+}
+.underContainer_upper{
+    width: 100%;
+    max-width: 1200px;
+}
+.underContainer{
     display: flex;
     justify-content: center;
     flex-direction: column;

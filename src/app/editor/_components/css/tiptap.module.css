@@ -86,10 +86,6 @@
     flex-direction: column;
   }
   
-  .tiptap img{
-    width: 700px;
-  }
-  
   /* .tiptap p:empty::before {
     content: ' ';
     display: inline-block;

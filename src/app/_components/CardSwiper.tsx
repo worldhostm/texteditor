@@ -86,6 +86,7 @@ export default function CardSwiper({data}:Props) {
       // onSwiper={(swiper) => console.log(swiper)}
       modules={[Grid]}
       navigation={false}
+      loop={false}
     >
       {data.map((contents, index) => (
         <SwiperSlide

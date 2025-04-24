@@ -700,7 +700,7 @@ const addImage = useCallback(() => {
       <div
       className={styles.gethtml}
       style={{ 
-        width:'700px',
+        // width:'700px',
         wordBreak: 'break-word'
       }}
       dangerouslySetInnerHTML={{ __html: editor.getHTML() }} />
