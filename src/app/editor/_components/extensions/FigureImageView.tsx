@@ -2,12 +2,13 @@
 import React, { useRef, useEffect } from 'react'
 import { NodeViewWrapper , NodeViewContent} from '@tiptap/react'
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface Props {
   node: any
-  updateAttributes: (attrs: Record<string, any>) => void
 }
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-const FigureImageView: React.FC<Props> = ({ node, updateAttributes }) => {
+const FigureImageView: React.FC<Props> = ({ node }) => {
   const { src, alt, caption } = node.attrs
   const figcaptionRef = useRef<HTMLDivElement>(null)
 
@@ -27,5 +28,6 @@ const FigureImageView: React.FC<Props> = ({ node, updateAttributes }) => {
     </NodeViewWrapper>
   )
 }
+
 
 export default FigureImageView

@@ -42,7 +42,7 @@
     /* 슬라이드 카드 css 따로 */
     .container_card{
         width: 100%;
-        padding : 12px;
+        padding : 0px 12px;
     }
     .container_card > a{
         display: flex;

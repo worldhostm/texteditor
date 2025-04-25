@@ -32,7 +32,6 @@
   80%  { transform: translateX(5px); }
   100% { transform: translateX(0); }
 }
-
 body table {
   border:1px solid #eaeaea;
 }
@@ -307,9 +306,7 @@ body > img{
   }
 } */
 
-html,
 body {
-  max-width: 100vw;
   overflow-x: hidden;
 }
 
@@ -322,27 +319,23 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: 'Hana2-Regular';
-  font-weight: 0;
 }
-body img{
-  /* width: 700px; */
-}
-/* * {
+* {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
-} */
+}
 
 a {
   color: inherit;
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
   }
-}
+} */
 
 .tiptap[role="textbox"]{
   width: 100%;
@@ -351,6 +344,7 @@ a {
 }
 
 .tiptap table {
+  width: 100%;
   border-collapse: collapse;
   margin: 0;
   overflow: hidden;

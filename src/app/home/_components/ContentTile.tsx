@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect } from 'react'
+import React from 'react'
 import styles from './contentTile.module.css';
 import SVGIcon from '@/app/_components/SVGIcon';
 
@@ -11,8 +11,6 @@ interface Props{
   isCard?:boolean,
   id:number
 }
-const date = new Date();
-const today = date.getDate();
 export default function ContentTile({id,idx,thumbnail,title,regDate='2024.04.02', isCard}:Props) {
   return (
     !isCard

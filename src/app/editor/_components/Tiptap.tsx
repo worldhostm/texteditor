@@ -33,7 +33,6 @@ import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
 import Underline from '@tiptap/extension-underline';
 import Emoji, { gitHubEmojis } from '@tiptap-pro/extension-emoji';
-import styled from 'styled-components';
 import { EmojiCommand } from './extensions/EmojiCommand';
 import {EmojiPicker} from './EmojiPicker';
 import SVGIcon from '@/app/_components/SVGIcon';
@@ -48,13 +47,6 @@ import FigureImageView from '../_components/extensions/FigureImageView';
 
 const emojis = ['😀', '😂', '😍', '😎', '😢', '😡', '👍', '🎉', '🔥']
 
-export const ButtonGroup = styled.div`
-  display: block;
-  gap: 8px;
-  word-break: break-all;
-  width: 100%;
-  height: auto;
-`;
 
 type Status = 'draft' | 'scheduled' | 'published'
 
@@ -80,6 +72,8 @@ export default function TiptapEditor() {
   const [position] = useState<Position>({ top: 0, left: 0 })
   const [status, setStatus] = useState<'draft'| 'scheduled'| 'published'>('draft'); // 예시로 string
   const [title, setTitle] = useState('');
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupPos, setPopupPos] = useState({ top: 0, left: 0 });
 
   const handleEmojiClick = (emoji: string) => {
     if (!editor) return
@@ -326,6 +320,27 @@ const addImage = useCallback(() => {
       editor?.commands.insertEmoji(emoji)
       setShowPicker(false)
     }
+  
+    
+    editor.on('selectionUpdate', () => {
+      const { from, to } = editor.state.selection
+      const domAtPos = editor.view.domAtPos(from)
+    
+      // 테이블 셀 클릭 여부 확인
+      const domNode = domAtPos.node as HTMLElement
+      if (domNode.closest('th') || domNode.closest('td')) {
+        // 위치 계산 후 "..." 메뉴 띄우기
+        const cell = domNode.closest('th') || domNode.closest('td')
+        const rect = cell?.getBoundingClientRect()
+    
+        if (rect) {
+          setPopupPos({ top: rect.top, left: rect.left + rect.width - 20 })
+          setShowPopup(true)
+        }
+      } else {
+        setShowPopup(false)
+      }
+    })
 
     const backUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}`;
     
@@ -451,7 +466,7 @@ const addImage = useCallback(() => {
 
   return (
     <div className={styles['control-group']}>
-    <ButtonGroup>
+    <div className={`${styles.button_group}`}>
           <button
               onClick={() => setShowPicker(prev => !prev)}
               // style={{background:'black'}}
@@ -651,14 +666,14 @@ const addImage = useCallback(() => {
             <SVGIcon id="format-thumbnail" />
             <input type="file" id="thumbnail" className={styles.thumbnailUpload} onChange={handleThumbnailUpload} style={{color:'black'}} />
           </label>
-    </ButtonGroup>
+    </div>
     <div className={styles.titleContainer}>
       <input value={title||''} onChange={(e)=>setTitle(e.target.value)} placeholder='제목을 입력하세요'/>
     </div>
       <EditorContent editor={editor} className={styles.tiptap} />
       {thumbnailPreview&& <img src={typeof thumbnailPreview === 'string' ? thumbnailPreview : ''} alt="썸네일 미리보기" style={{width:'auto',height:'auto', maxWidth:'300px', maxHeight:'300px'}}/>}
       <div>
-      <label>
+      {/* <label>
         <input
           type="radio"
           name="status"
@@ -689,12 +704,24 @@ const addImage = useCallback(() => {
           onChange={handleChange}
         />
         Published
-      </label>
-      <p>현재 상태: <strong>{status}</strong></p>
-    </div>      
-      <button onClick={handleSubmit}>저장</button>
+      </label> */}
+      {/* <p>현재 상태: <strong>{status}</strong></p> */}
+    </div>
+    {showPopup && (
+  <div
+      className="absolute z-10 bg-white border rounded shadow"
+      style={{ top: popupPos.top, left: popupPos.left }}
+    >
+      <button onClick={() => editor.chain().focus().addColumnAfter().run()}>열 추가</button>
+      <button onClick={() => editor.chain().focus().deleteColumn().run()}>열 삭제</button>
+      <button onClick={() => editor.chain().focus().mergeCells().run()}>셀 병합</button>
+    </div>
+  )}
+    <div className={`${styles['content-aside']}`}>
+      <button onClick={handleSubmit} className={`${styles.editcomplete}`}>완료</button>
+    </div>
       {loading && <LoadingSpinner />}
-      <p>
+      {/* <p>
         <strong>HTML Output:</strong>
       </p>
       <div
@@ -707,7 +734,7 @@ const addImage = useCallback(() => {
       <div style={{
         width:'100%',
         wordBreak:'break-all'
-      }}>{editor.getHTML()}</div>
+      }}>{editor.getHTML()}</div> */}
     </div>
   )
 }

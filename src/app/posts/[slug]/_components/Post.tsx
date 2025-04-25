@@ -32,7 +32,8 @@ export default function Post({ id }: Props) {
         backgroundImage:`url('${thumbnail}')`,
         backgroundRepeat:'no-repeat',
         backgroundSize:'cover',
-        backgroundPosition:'center'
+        backgroundPosition:'top center',
+        objectFit:'cover'
       }}>
       </div>
       <RichContentRenderer html={html} />
