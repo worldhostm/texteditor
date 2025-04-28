@@ -67,7 +67,7 @@ export default function RichContentRenderer({ html }: Props) {
               minHeight:'700px',
               display:'flex',
               flexDirection:'column',
-              alignItems:'center'
+              // alignItems:'center'
             }}>
               {parse(safeHtml, options)}</div>
          </div>

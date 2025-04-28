@@ -42,6 +42,7 @@ import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/app/_components/LoadingSpinner';
 import { ImageWithCaption } from '../_components/extensions/ImageWithCaption';
 import FigureImageView from '../_components/extensions/FigureImageView';
+import PublishSettingsModal from './PublishSettingsModal';
 
 
 
@@ -72,8 +73,11 @@ export default function TiptapEditor() {
   const [position] = useState<Position>({ top: 0, left: 0 })
   const [status, setStatus] = useState<'draft'| 'scheduled'| 'published'>('draft'); // 예시로 string
   const [title, setTitle] = useState('');
+  //테이블 위젯
   const [showPopup, setShowPopup] = useState(false);
   const [popupPos, setPopupPos] = useState({ top: 0, left: 0 });
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isScheduled, setisScheduled] = useState<boolean>(false);
 
   const handleEmojiClick = (emoji: string) => {
     if (!editor) return
@@ -410,10 +414,10 @@ const addImage = useCallback(() => {
         alert('제목을 입력하세요 !')
         return;
       }
-      const html = editor?.getHTML()
-      if (!html) return
+      const html = editor?.getHTML();
+      if (!html) return;
     
-      const parser = new DOMParser()
+      const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html')
       const imgElements = Array.from(doc.querySelectorAll('img[src^="blob:"]'))
     
@@ -465,7 +469,7 @@ const addImage = useCallback(() => {
     };
 
   return (
-    <div className={styles['control-group']}>
+    <div className={`${styles['control-group']}` }>
     <div className={`${styles.button_group}`}>
           <button
               onClick={() => setShowPicker(prev => !prev)}
@@ -668,7 +672,7 @@ const addImage = useCallback(() => {
           </label>
     </div>
     <div className={styles.titleContainer}>
-      <input value={title||''} onChange={(e)=>setTitle(e.target.value)} placeholder='제목을 입력하세요'/>
+      <input className={``} value={title||''} onChange={(e)=>setTitle(e.target.value)} placeholder='제목을 입력하세요'/>
     </div>
       <EditorContent editor={editor} className={styles.tiptap} />
       {thumbnailPreview&& <img src={typeof thumbnailPreview === 'string' ? thumbnailPreview : ''} alt="썸네일 미리보기" style={{width:'auto',height:'auto', maxWidth:'300px', maxHeight:'300px'}}/>}
@@ -708,17 +712,29 @@ const addImage = useCallback(() => {
       {/* <p>현재 상태: <strong>{status}</strong></p> */}
     </div>
     {showPopup && (
-  <div
-      className="absolute z-10 bg-white border rounded shadow"
-      style={{ top: popupPos.top, left: popupPos.left }}
-    >
-      <button onClick={() => editor.chain().focus().addColumnAfter().run()}>열 추가</button>
-      <button onClick={() => editor.chain().focus().deleteColumn().run()}>열 삭제</button>
-      <button onClick={() => editor.chain().focus().mergeCells().run()}>셀 병합</button>
-    </div>
-  )}
-    <div className={`${styles['content-aside']}`}>
-      <button onClick={handleSubmit} className={`${styles.editcomplete}`}>완료</button>
+      <div
+        className="absolute z-10 bg-white border rounded shadow"
+        style={{ top: popupPos.top, left: popupPos.left }}
+      >
+        <button onClick={() => editor.chain().focus().addColumnAfter().run()}>열 추가</button>
+        <button onClick={() => editor.chain().focus().deleteColumn().run()}>열 삭제</button>
+        <button onClick={() => editor.chain().focus().mergeCells().run()}>셀 병합</button>
+      </div>
+    )}
+    <div className={`${styles['content-aside']} ${isOpen && styles.none}`}>
+      <button 
+      onClick={()=>{
+        if(!title) {
+          const titleInput = document.querySelector(`.${styles.titleContainer} > input`);
+          titleInput?.classList.add('red');
+          return;
+        };
+        setIsOpen(!isOpen)
+        if(isOpen === true){
+          handleSubmit();
+        }
+      }}
+      className={`${styles.editcomplete}`}>완료</button>
     </div>
       {loading && <LoadingSpinner />}
       {/* <p>
@@ -735,6 +751,18 @@ const addImage = useCallback(() => {
         width:'100%',
         wordBreak:'break-all'
       }}>{editor.getHTML()}</div> */}
+    { 
+      <PublishSettingsModal 
+        isOpen={isOpen}
+        title={'제목 프롭스'} 
+        publishDate={new Date().toString()}
+        isScheduled={isScheduled}
+        setisScheduled={setisScheduled}
+        onChangePublishDate={()=>{}}
+        onClose={()=>{setIsOpen(false)}}
+        onConfirm={()=>{}}
+      />
+    }
     </div>
   )
 }

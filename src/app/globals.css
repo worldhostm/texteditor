@@ -341,6 +341,7 @@ a {
   width: 100%;
   min-height: 50vh;
   padding : 40px;
+  outline:none
 }
 
 .tiptap table {
@@ -438,4 +439,49 @@ a {
 .contentRender >*>figure>img{
   max-width:700px;
   width: 100%;
+}
+
+button{
+  border: none;
+  outline: none;
+  background: none;
+}
+
+.buttonStyle{
+  border-radius: 24px;
+  width: 88px;
+  height: 40px;
+  line-height: 38px;
+  background-color: var(--gray-100);
+}
+
+.react-datepicker-wrapper{
+  width: auto;
+}
+.react-datepicker__header{
+  background-color: var(--primary-500) !important;
+}
+.react-datepicker__current-month, 
+.react-datepicker__day-name,
+.react-datepicker-time__header
+{
+  color: white !important;
+}
+.react-datepicker__input-container input{
+  width: 94px;
+  outline: none;
+  border: none;
+}
+
+.date_bodyS{
+  font-size: 16px;
+}
+
+.alertBtn{
+  background-color: rgba(235, 66, 14,1) !important;
+  color : white !important;
+}
+
+input.red::placeholder{
+  color : red !important;
 }
