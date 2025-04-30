@@ -24,7 +24,7 @@ import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
 import TableRow from '@tiptap/extension-table-row';
 import Text from '@tiptap/extension-text';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {TextBox} from './extensions/TextBox';
 import FileHandler from '@tiptap-pro/extension-file-handler';
 import TextAlign from '@tiptap/extension-text-align';
@@ -43,6 +43,7 @@ import LoadingSpinner from '@/app/_components/LoadingSpinner';
 import { ImageWithCaption } from '../_components/extensions/ImageWithCaption';
 import FigureImageView from '../_components/extensions/FigureImageView';
 import PublishSettingsModal from './PublishSettingsModal';
+import { CustomParagraph } from './extensions/CustomParagraph';
 
 
 
@@ -71,22 +72,18 @@ export default function TiptapEditor() {
   const [loading, setLoading] = useState<boolean>(false);
   const [showPicker, setShowPicker] = useState(false)
   const [position] = useState<Position>({ top: 0, left: 0 })
-  const [status, setStatus] = useState<'draft'| 'scheduled'| 'published'>('draft'); // 예시로 string
+  const [status] = useState<'draft'| 'scheduled'| 'published'>('draft'); // 예시로 string
   const [title, setTitle] = useState('');
   //테이블 위젯
   const [showPopup, setShowPopup] = useState(false);
-  const [popupPos, setPopupPos] = useState({ top: 0, left: 0 });
+  const [popupPos] = useState({ top: 0, left: 0 });
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isScheduled, setisScheduled] = useState<boolean>(false);
-
-  const handleEmojiClick = (emoji: string) => {
-    if (!editor) return
-    editor.chain().focus().insertContent(emoji).run()
-    setShowPicker(false)
-  }
-
+  const widgetRef = useRef<HTMLDivElement | null>(null);
+  const [isWidgetPositioned, setIsWidgetPositioned] = useState(false);
   const editor = useEditor({
     extensions: [
+      CustomParagraph,
       EmojiCommand,
       // StarterKit,
       Document,
@@ -228,15 +225,23 @@ export default function TiptapEditor() {
           };
         },
       }),
-      ImageWithCaption.extend({
-        addNodeView() {
-          return ReactNodeViewRenderer(FigureImageView)
-        },
-      }),
+      ImageWithCaption
     ],
     content:``,
   })
 
+  useEffect(() => {
+    if (isWidgetPositioned) return;
+    const tableWrapper = document.querySelector('.tableWrapper') as HTMLElement;
+    if (tableWrapper && widgetRef.current) {
+      const rect = tableWrapper.getBoundingClientRect();
+      widgetRef.current.style.position = 'absolute';
+      widgetRef.current.style.top = popupPos.top.toString();
+      // `${rect.top - 50}px`;
+      widgetRef.current.style.left = `${rect.left }px`;
+      setIsWidgetPositioned(true); // ⛔ 이후 재실행 안 되게 막는다
+    }
+  }, []);
 
 //@todo S3에 맞게 변경
 const addImage = useCallback(() => {
@@ -256,7 +261,7 @@ const addImage = useCallback(() => {
       attrs: {
         src: blobUrl,
         alt: '테스트 이미지',
-        caption: '이미지 설명',
+        caption: '',
       },
     }).run();
 
@@ -327,7 +332,7 @@ const addImage = useCallback(() => {
   
     
     editor.on('selectionUpdate', () => {
-      const { from, to } = editor.state.selection
+      const { from } = editor.state.selection
       const domAtPos = editor.view.domAtPos(from)
     
       // 테이블 셀 클릭 여부 확인
@@ -338,7 +343,7 @@ const addImage = useCallback(() => {
         const rect = cell?.getBoundingClientRect()
     
         if (rect) {
-          setPopupPos({ top: rect.top, left: rect.left + rect.width - 20 })
+          // setPopupPos({ top: rect.top, left: rect.left + rect.width - 20 })
           setShowPopup(true)
         }
       } else {
@@ -460,9 +465,9 @@ const addImage = useCallback(() => {
     //   }
     // };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setStatus(e.target.value as Status)
-    }
+    // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //   setStatus(e.target.value as Status)
+    // }
 
     const handleHighlightColor = (color: string) => {
       editor.chain().focus().toggleHighlight({ color }).run();
@@ -482,19 +487,6 @@ const addImage = useCallback(() => {
               onSelect={handleEmojiSelect}
               position={position}
             />
-            )}
-            {showPicker && (
-              <div className="absolute mt-2 p-2 bg-white border rounded shadow z-50 flex flex-wrap gap-2">
-                {emojis.map((emoji, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => handleEmojiClick(emoji)}
-                    className="text-xl hover:scale-125 transition"
-                  >
-                    {emoji}
-                  </button>
-                ))}
-              </div>
             )}
           <button
             onClick={() => {
@@ -631,14 +623,27 @@ const addImage = useCallback(() => {
             <SVGIcon id="align-right"/>
           </button>
           <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-            className={`${editor.isActive({ level: 1 }) ? 'is-active' : ''}`}
-          >
-            <SVGIcon id="h1" />
-          </button>
+            onClick={() => {
+              const currentClass = editor.getAttributes('paragraph').class || '';
+              const headlineL = typeof currentClass === 'string' && currentClass.includes('headlineL');
+
+              editor.chain().focus().updateAttributes('paragraph', {
+                class: headlineL ? null : 'headlineL',
+              }).run();
+            }}
+            className={editor.getAttributes('paragraph').class === 'headlineL' ? 'is-active' : ''}>
+          <SVGIcon id="h1"/>
+        </button>
           <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            className={`${editor.isActive({ level: 2 }) ? 'is-active' : ''}`}
+            onClick={() => {
+              const currentClass = editor.getAttributes('paragraph').class || '';
+              const headlineM = typeof currentClass === 'string' && currentClass.includes('headlineM');
+
+              editor.chain().focus().updateAttributes('paragraph', {
+                class: headlineM ? null : 'headlineM',
+              }).run();
+            }}
+            className={editor.getAttributes('paragraph').class === 'headlineM' ? 'is-active' : ''}
           >
             <SVGIcon id="h2" />
           </button>
@@ -760,7 +765,7 @@ const addImage = useCallback(() => {
         setisScheduled={setisScheduled}
         onChangePublishDate={()=>{}}
         onClose={()=>{setIsOpen(false)}}
-        onConfirm={()=>{}}
+        onConfirm={()=>handleSubmit()}
       />
     }
     </div>

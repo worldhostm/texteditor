@@ -350,6 +350,7 @@ a {
   min-height: 50vh;
   padding : 40px;
   outline:none;
+  margin-bottom: 200px;
 }
 
 .tiptap table {
@@ -522,4 +523,23 @@ h1{
   border: 1px solid #ddd; /* 필요시 정확한 border 스타일로 조정 */
   border-radius: 0.25rem; /* Tailwind의 rounded */
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Tailwind의 shadow */
+}
+
+.login{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login > input, .login > button{
+  width: 50%;
+  padding : 20px;
+  outline: none;
+  border: 1px solid var(--gray-300);
+  border-radius: 12px;
+}
+
+.login > button{
+  background-color: var(--primary-300);
+  color: white;
 }
