@@ -12,8 +12,8 @@ interface Props {
 export default function SVGIcon({id,width=28,height=29, isResponsive,className}:Props) {
   return (
     <svg
-    width={isResponsive ? `calc(${width}/375*100vw)`: width}
-    height={isResponsive ? `calc(${height}/375*100vw)`: height}
+    width={isResponsive ? `calc(${width}/375*80vw)`: width}
+    height={isResponsive ? `calc(${height}/375*80vw)`: height}
     className={className}
     // style={{
     //   fill:'white',

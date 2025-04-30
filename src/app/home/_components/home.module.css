@@ -1,17 +1,20 @@
 .container{
     width: 100%;
+    max-width: 700px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
 }
 
 ._container{
+    top: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
-    max-width: 1200px;
-    height: calc(100vw / 375 * 250);
+    max-width: 700px;
+    /* height: calc(100vw / 375 * 250); */
     background-color: var(--primary-500);
 }
 
@@ -19,23 +22,45 @@
     margin-top: calc(100vw/375 * 42);
     margin-bottom:calc(100vw/375 * 32);
     color:white;
-}
-.radi_container{
+    aspect-ratio: 343/160;
     width: 100%;
-    max-width: 1200px;
-    height: calc(100vw / 375 * 80);
-    background-color: var(--primary-500);
-    border-bottom-left-radius: 100%;
-    border-bottom-right-radius: 100%;
-    color: var(--primary-300);
+    height: auto;
+    max-width: 686px;
     display: flex;
     align-items: center;
     justify-content: center;
+    background-image: url('/img/mainbanner.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    object-fit: cover;
+}
+.radi_container{
+    width: 100%;
+    height: auto;
+    max-width: 700px;
+    aspect-ratio: 125/44 !important;
+    background-image: url('/img/RadiVector.svg');
+    background-size: 100%;
+    background-position: top;
+    background-repeat: no-repeat;
+    /* height: calc(100vw / 375 * 80); */
+    /* background-color: var(--primary-500);
+    border-bottom-left-radius: 100%;
+    border-bottom-right-radius: 100%; */
+    color: var(--primary-300);
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
     gap: calc(100vw / 375 * 7);
+}
+.radi_container_inner{
+    margin-top: calc(100vw/375 * 20);
+    display:flex;
+    gap:8px;
 }
 .underContainer_upper{
     width: 100%;
-    max-width: 1200px;
+    max-width: 700px;
 }
 .underContainer{
     display: flex;

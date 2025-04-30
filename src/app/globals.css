@@ -200,13 +200,13 @@ body > img{
 
 
 .headlineS{
-  font-size: 1.125rem !important;
-  line-height: 1.75rem !important;
-  /* font-size: 18px;
-  line-height: 28px ; */
+  /* font-size: 1.125rem !important;
+  line-height: 1.75rem !important; */
+  font-size: 18px;
+  line-height: 28px ;
 }
 .headlineM{
-    font-size: 24px ;
+    font-size: 24px;
     line-height: 36px ;
 }
 .headlineL{
@@ -215,12 +215,12 @@ body > img{
 }
 
 .titleS{
-    font-size: clamp(12px,calc(14/375*100vw), 32px) ;
-    line-height: calc(20/375*100vw);
+    font-size: clamp(12px,calc(14/375*100vw), 24px) ;
+    line-height: clamp(20px,calc(14/375*100vw), 36px) ;
 }
 .titleM {
-  font-size: calc((100vw / 375) * 18);
-  line-height: calc((100vw / 375) * 24);
+  font-size: clamp(18px,calc(18/375*100vw), 32px) ;
+  line-height: clamp(24px,calc(24/375*100vw), 48px) ;
 }
 
 .titleL {
@@ -229,12 +229,14 @@ body > img{
 }
 
 .bodyXS{
-    font-size: calc((100vw / 375) * 12) !important;
-    line-height: calc((100vw / 375) * 20) !important;
+    font-size: clamp(12px,calc(12/375*100vw), 24px) !important;
+    line-height: clamp(20px,calc(20/375*100vw), 36px) !important;
 }
 .bodyS{
-  font-size : calc((100vw / 375) * 14);
-  line-height: calc((100vw / 375) * 24);
+  font-size: clamp(14px,calc(14/375*100vw), 24px) !important;
+  line-height: clamp(24px,calc(24/375*100vw), 36px) !important;
+  /* font-size : calc((100vw / 375) * 14);
+  line-height: calc((100vw / 375) * 24); */
 } 
 .bodyM {
   font-size: calc((100vw / 375) * 16);
@@ -265,7 +267,7 @@ body > img{
   body iframe, body img{
   width: 90% !important;
   }
-  body img, body iframe{
+  body iframe{
     aspect-ratio: 375/200 !important;
   }
   body iframe{
@@ -306,16 +308,20 @@ body > img{
   }
 } */
 
-body {
-  overflow-x: hidden;
-}
-
+/* .contentRender * p + p {
+  margin-bottom: 20px;
+} */
 /* tiptap 앤터 줄넘김 처리 */
 p:empty::before {
   content: '\00a0'; /* non-breaking space */
 }
 
 body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
   color: var(--foreground);
   background: var(--background);
   font-family: 'Hana2-Regular';
@@ -324,6 +330,7 @@ body {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  user-select: none;
 }
 
 a {
@@ -339,9 +346,10 @@ a {
 
 .tiptap[role="textbox"]{
   width: 100%;
+  height: auto;
   min-height: 50vh;
   padding : 40px;
-  outline:none
+  outline:none;
 }
 
 .tiptap table {
@@ -408,8 +416,8 @@ a {
   cursor: col-resize;
 }
 .swiper-slide{
-  width: calc(108/375*100vw) !important;
-  height: calc(140/375*100vw) !important;
+  /* width: calc(108/375*100vw) !important;
+  height: calc(140/375*100vw) !important; */
   aspect-ratio: 108/140 !important;                                                                                                                                                          
 }
 
@@ -431,9 +439,10 @@ a {
 .contentRender{
   width: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
-  margin-top:120px;
+  margin-top:40px;
+  flex-direction: column;
+  padding : 0px 16px;
 }
 
 .contentRender >*>figure>img{
@@ -484,4 +493,33 @@ button{
 
 input.red::placeholder{
   color : red !important;
+}
+
+ul{
+  margin-top: 16px;
+  margin-left: 20px;
+}
+ul > li {
+  margin-bottom: 16px;
+}
+.swiper{
+  width: 100%;
+}
+
+h1{
+ line-height: 64px; 
+}
+
+.showup {
+  width: 150px;
+  display: flex;
+  justify-content: space-around;
+  position: absolute;
+  top:30px;
+  right: 0;
+  z-index: 10;
+  background-color: white;
+  border: 1px solid #ddd; /* 필요시 정확한 border 스타일로 조정 */
+  border-radius: 0.25rem; /* Tailwind의 rounded */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Tailwind의 shadow */
 }

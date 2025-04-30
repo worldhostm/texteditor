@@ -4,6 +4,7 @@
 
 .tiptap, .control-group, .titleContainer, .titleContainer input{
   width: 100% !important;
+  max-width:1140px;
 }
 .gethtml{
   padding : 0px 24px !important;

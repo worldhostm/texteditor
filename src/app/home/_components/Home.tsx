@@ -4,48 +4,6 @@ import ContentTile from './ContentTile'
 import CardSwiper, { Content } from '@/app/_components/CardSwiper';
 import SVGIcon from '@/app/_components/SVGIcon';
 import styles from './home.module.css';
-// const sampleData: Content[] = [
-//     {
-//       title: 'React 상태 관리 제대로 이해하기',
-//       regDate: '2024-11-01',
-//       thumbnail: '/default_service.png',
-//     },
-//     {
-//       title: 'Next.js App Router 완전 가이드',
-//       regDate: '2024-11-03',
-//       thumbnail: '/default_service.png',
-//     },
-//     {
-//       title: 'TypeScript 유틸리티 타입 총정리',
-//       regDate: '2024-11-05',
-//       thumbnail: '/default_service.png',
-//     },
-//     {
-//       title: 'CSS 모듈 vs Styled-components',
-//       regDate: '2024-11-07',
-//       thumbnail: '/default_service.png',
-//     },
-//     {
-//       title: 'GitHub Actions로 자동 배포하기',
-//       regDate: '2024-11-09',
-//       thumbnail: '/default_service.png',
-//     },
-//     {
-//       title: 'React Query vs SWR 비교 분석',
-//       regDate: '2024-11-11',
-//       thumbnail: '/default_service.png',
-//     },
-//     {
-//       title: '웹 접근성(A11y) 체크리스트',
-//       regDate: '2024-11-13',
-//       thumbnail: '/default_service.png',
-//     },
-//     {
-//       title: 'Vite와 Webpack 성능 비교',
-//       regDate: '2024-11-15',
-//       thumbnail: '/default_service.png',
-//     }
-//   ];
 export default function Home() {
     const [data, setData] = useState([]);
     useEffect(() => {
@@ -68,12 +26,16 @@ export default function Home() {
   return (
     <div className={`${styles.container}`}>
         <div className={`${styles._container}`}>
-            <div className={`${styles.headerText} titleM`}>“은행 방문 보다 쉬운 생활 금융 팁”</div>
+            <div className={`${styles.headerText} titleM`}></div>
           <CardSwiper data={data}/>
         </div>
         <div className={`${styles.radi_container} bodyS`}>
-          <SVGIcon id="swipe" className='shake'/>
-          카드를 스크롤 해보세요
+          <div 
+            className={`${styles.radi_container_inner}`}
+          >
+          <SVGIcon id="swipe" className='shake' isResponsive/>
+            카드를 스크롤 해보세요
+          </div>
         </div>
         <div 
         className={styles.underContainer}

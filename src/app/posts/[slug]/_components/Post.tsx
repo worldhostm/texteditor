@@ -9,6 +9,7 @@ interface Props {
 
 export default function Post({ id }: Props) {
   const [html, sethtml] = useState<string|''>('');
+  const [title, settitle] = useState<string>('');
   const [thumbnail, setthumbnail] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   useEffect(() => {
@@ -18,6 +19,7 @@ export default function Post({ id }: Props) {
         console.info(data.thumbnail);
         sethtml(data.content);
         setthumbnail(data.thumbnail);
+        settitle(data.title);
         setIsLoading(false);
       })
   }, [id])
@@ -26,7 +28,7 @@ export default function Post({ id }: Props) {
     !isLoading &&
     <>
       <div style={{
-        width:'auto',
+        width:'100%',
         height:'auto',
         aspectRatio:'375/240',
         backgroundImage:`url('${thumbnail}')`,
@@ -36,7 +38,7 @@ export default function Post({ id }: Props) {
         objectFit:'cover'
       }}>
       </div>
-      <RichContentRenderer html={html} />
+      <RichContentRenderer html={html} title={title} />
     </>
   )
 }

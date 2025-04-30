@@ -10,9 +10,10 @@ import ReactPlayer from 'react-player';
 
 interface Props {
   html: string;
+  title: string;
 }
 
-export default function RichContentRenderer({ html }: Props) {
+export default function RichContentRenderer({ html, title}: Props) {
   const [safeHtml, setSafeHtml] = useState<string>('');
   useEffect(() => {
     // 클라이언트에서만 DOMPurify import
@@ -61,8 +62,27 @@ export default function RichContentRenderer({ html }: Props) {
   };
 
   return <div className='contentRender'>
-            <div style={{
-              width: '700px',
+            <div
+              className='hana_bold headlineL'
+              style={{
+                maxWidth:'700px',
+                width:'100%'
+              }}
+            >{title}</div>
+            <div
+            style={{
+              width:'100%',
+              maxWidth:'700px',
+              marginTop:'5px',
+              color : 'var(--gray-500)',
+
+            }}
+            >2025.04.02</div>
+            <div 
+            className='bodyS pretendard_regular'
+            style={{
+              marginTop:'20px',
+              maxWidth: '700px',
               height:'auto',
               minHeight:'700px',
               display:'flex',
