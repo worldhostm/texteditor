@@ -25,6 +25,7 @@ export default function Home() {
     
   return (
     <div className={`${styles.container}`}>
+      <SVGIcon id="bank1" />
         <div className={`${styles._container}`}>
             <div className={`${styles.headerText} titleM`}></div>
           <CardSwiper data={data}/>
@@ -33,7 +34,7 @@ export default function Home() {
           <div 
             className={`${styles.radi_container_inner}`}
           >
-          <SVGIcon id="swipe" className='shake' isResponsive/>
+          <SVGIcon id="swipe" className='shake'/>
             카드를 스크롤 해보세요
           </div>
         </div>
@@ -53,6 +54,7 @@ export default function Home() {
                                                     title={contents.title} 
                                                     regDate={contents.regDate}
                                                     isCard={false}
+                                                    icon = {`bank + ${index}`}
                                                   />)
         }
         </div>

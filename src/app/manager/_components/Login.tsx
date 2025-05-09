@@ -29,7 +29,7 @@ export default function Login() {
             alert('✅ 로그인 성공')
             console.log(data) // 예: 토큰 or 사용자 정보
             router.push('/editor');
-            localStorage.setItem('token', JSON.stringify(data));
+            localStorage.setItem('token', JSON.stringify(data.token));
         } else {
             alert(`❌ 로그인 실패: ${data.message}`)
         }

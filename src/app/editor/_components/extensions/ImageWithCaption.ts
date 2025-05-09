@@ -27,12 +27,17 @@ export const ImageWithCaption = Node.create({
     ]
   },
 
-  renderHTML({ HTMLAttributes }) { 
+  renderHTML({ HTMLAttributes }) {
+    const { caption, ...imgAttrs } = HTMLAttributes
+  
     return [
       'figure',
       mergeAttributes(HTMLAttributes),
-      ['img', HTMLAttributes],
-      ['figcaption', {}, HTMLAttributes.caption || ''],
+      ['img', {
+        ...imgAttrs,
+        style: 'width: 100%; height: 100%; object-fit: contain;',
+      }],
+      ['figcaption', {}, caption || ''],
     ]
   },
 })

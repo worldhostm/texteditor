@@ -18,7 +18,7 @@ interface Props {
 export default function CardSwiper({data}:Props) {
   return (
   <Swiper
-      slidesPerView={3.5}
+      slidesPerView={"auto"}
       // onSlideChange={() => console.log('slide change')}
       // onSwiper={(swiper) => console.log(swiper)}
       modules={[Grid]}
@@ -39,6 +39,7 @@ export default function CardSwiper({data}:Props) {
           title={contents.title}
           regDate={contents.regDate}
           isCard={true}
+          icon = {"bank1"}
           />
         </SwiperSlide>
       ))}

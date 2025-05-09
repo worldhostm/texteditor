@@ -213,8 +213,57 @@ body > img{
     font-size : 32px !important;
     line-height: 48px !important;
 }
+.titleS {
+  font-size: 14px;
+  line-height: 24px;
+}
 
-.titleS{
+.titleM {
+  font-size: 18px;
+  line-height: 24px;
+}
+
+.titleL {
+  font-size: 22px;
+  line-height: 32px;
+}
+
+.bodyXS {
+  font-size: 12px !important;
+  line-height: 20px !important;
+}
+
+.bodyS {
+  font-size: 14px !important;
+  line-height: 24px !important;
+}
+
+.bodyM {
+  font-size: 16px;
+  line-height: 28px;
+}
+
+.bodyL {
+  font-size: 18px;
+  line-height: 32px;
+}
+
+.labelS {
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.labelM {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.labelL {
+  font-size: 16px;
+  line-height: 24px;
+}
+
+/* .titleS{
     font-size: clamp(12px,calc(14/375*100vw), 24px) ;
     line-height: clamp(20px,calc(14/375*100vw), 36px) ;
 }
@@ -235,8 +284,6 @@ body > img{
 .bodyS{
   font-size: clamp(14px,calc(14/375*100vw), 24px) !important;
   line-height: clamp(24px,calc(24/375*100vw), 36px) !important;
-  /* font-size : calc((100vw / 375) * 14);
-  line-height: calc((100vw / 375) * 24); */
 } 
 .bodyM {
   font-size: calc((100vw / 375) * 16);
@@ -261,7 +308,7 @@ body > img{
 .labelL {
   font-size: calc((100vw / 375) * 16);
   line-height: calc((100vw / 375) * 24);
-}
+} */
 
 @media (max-width:1140px) {
   body iframe, body img{
@@ -417,8 +464,8 @@ a {
   cursor: col-resize;
 }
 .swiper-slide{
-  /* width: calc(108/375*100vw) !important;
-  height: calc(140/375*100vw) !important; */
+  width:  108px !important;
+  height: 140px !important;
   aspect-ratio: 108/140 !important;                                                                                                                                                          
 }
 
@@ -457,6 +504,9 @@ button{
   background: none;
 }
 
+figcaption{
+  color: var(--gray-500) !important;
+}
 .buttonStyle{
   border-radius: 24px;
   width: 88px;

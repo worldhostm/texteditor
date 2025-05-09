@@ -41,16 +41,16 @@ import HardBreak from '@tiptap/extension-hard-break';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/app/_components/LoadingSpinner';
 import { ImageWithCaption } from '../_components/extensions/ImageWithCaption';
-import FigureImageView from '../_components/extensions/FigureImageView';
 import PublishSettingsModal from './PublishSettingsModal';
 import { CustomParagraph } from './extensions/CustomParagraph';
+import { ResizableImage } from './extensions/ResizableImage';
 
 
 
-const emojis = ['😀', '😂', '😍', '😎', '😢', '😡', '👍', '🎉', '🔥']
+// const emojis = ['😀', '😂', '😍', '😎', '😢', '😡', '👍', '🎉', '🔥']
 
 
-type Status = 'draft' | 'scheduled' | 'published'
+// type Status = 'draft' | 'scheduled' | 'published'
 
 // interface TiptapEditorProps {
 //   id: string
@@ -69,6 +69,18 @@ interface Position {
 
 export default function TiptapEditor() {
   const router = useRouter();
+
+  
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/manager');
+      }
+    }
+  }, [])
+    
+    
   const [loading, setLoading] = useState<boolean>(false);
   const [showPicker, setShowPicker] = useState(false)
   const [position] = useState<Position>({ top: 0, left: 0 })
@@ -156,6 +168,7 @@ export default function TiptapEditor() {
       Paragraph,
       Text,
       Image,
+      ResizableImage,
       YouTube,
       Bold,
       Table.configure({
@@ -257,11 +270,10 @@ const addImage = useCallback(() => {
     // 현재 에디터에 blob 이미지 삽입 (작성 중에는 이걸로 표시)
     // editor?.chain().focus().setImage({ src: blobUrl }).run()
     editor?.chain().focus().insertContent({
-      type: 'figureImage',
+      type: 'resizableImage',
       attrs: {
-        src: blobUrl,
-        alt: '테스트 이미지',
-        caption: '',
+        src:blobUrl,
+        width: 300,
       },
     }).run();
 
@@ -490,10 +502,27 @@ const addImage = useCallback(() => {
             )}
           <button
             onClick={() => {
-              const videoId = prompt('YouTube Video ID를 입력하세요 (예: dQw4w9WgXcQ)');
+              const input = prompt('YouTube URL 또는 Video ID를 입력하세요 (예: dQw4w9WgXcQ 또는 https://www.youtube.com/watch?v=dQw4w9WgXcQ)');
+              if (!input) return;
+
+              let videoId = '';
+
+              try {
+                const url = new URL(input);
+                videoId = url.searchParams.get('v') || ''; // watch?v=xxxx 형태
+                if (!videoId && url.hostname === 'youtu.be') {
+                  videoId = url.pathname.slice(1); // youtu.be/xxxx 형태
+                }
+              } catch {
+                // URL이 아닌 경우 그냥 ID라고 가정
+                videoId = input;
+              }
+
               if (videoId) {
                 const src = `https://www.youtube.com/embed/${videoId}`;
                 editor?.commands.setYouTubeVideo(src);
+              } else {
+                alert('유효한 YouTube URL 또는 ID가 아닙니다.');
               }
             }}
           >
@@ -680,7 +709,7 @@ const addImage = useCallback(() => {
       <input className={``} value={title||''} onChange={(e)=>setTitle(e.target.value)} placeholder='제목을 입력하세요'/>
     </div>
       <EditorContent editor={editor} className={styles.tiptap} />
-      {thumbnailPreview&& <img src={typeof thumbnailPreview === 'string' ? thumbnailPreview : ''} alt="썸네일 미리보기" style={{width:'auto',height:'auto', maxWidth:'300px', maxHeight:'300px'}}/>}
+      {thumbnailPreview && <img src={ (thumbnailPreview !== '' && typeof thumbnailPreview === 'string') ? thumbnailPreview : '/default.png'} alt="썸네일 미리보기" style={{width:'auto',height:'auto', maxWidth:'300px', maxHeight:'300px', fill:'true', objectFit:'contain'}}/>}
       <div>
       {/* <label>
         <input
@@ -766,6 +795,7 @@ const addImage = useCallback(() => {
         onChangePublishDate={()=>{}}
         onClose={()=>{setIsOpen(false)}}
         onConfirm={()=>handleSubmit()}
+        thumbnailBlob={thumbnailPreview}
       />
     }
     </div>

@@ -9,9 +9,10 @@ interface Props{
   regDate:string,
   idx:number,
   isCard?:boolean,
-  id:number
+  id:number,
+  icon?:string,
 }
-export default function ContentTile({id,idx,thumbnail,title,regDate='2024.04.02', isCard}:Props) {
+export default function ContentTile({id,idx,thumbnail,title,regDate='2024.04.02', isCard, icon}:Props) {
   return (
     !isCard
     ?
@@ -27,8 +28,8 @@ export default function ContentTile({id,idx,thumbnail,title,regDate='2024.04.02'
     :
     <div className={`${styles.container_card}`} key={title + idx}>
       <div className={`${styles.tileimg_card}`}>
-        <div className={styles.iconContainer}><SVGIcon id="sentiment-satisfied" isResponsive={true}/></div>
-        <div className={`${styles.title_card} titleS bold`}>{title}</div>
+        <div className={styles.iconContainer}><SVGIcon id={icon ? "" :'sentiment_satisfied'}/></div>
+        <div className={`${styles.title_card} labelM bold`}>{title}</div>
         <div className={`${styles.regDate_card} bodyXS`}>아티클 읽기</div>
       </div>
     </div>

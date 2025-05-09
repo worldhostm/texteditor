@@ -3,6 +3,7 @@
 import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import styles from './css/publishSettingsModal.module.css';
 import CustomDatePicker from '@/app/_components/DatePicker';
+import Image from 'next/image';
 
 interface PublishSettingsModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface PublishSettingsModalProps {
   setisScheduled : Dispatch<SetStateAction<boolean>>
   onConfirm: () => void;
   onClose: () => void;
+  thumbnailBlob:string | ArrayBuffer | null;
 }
 
 const PublishSettingsModal: React.FC<PublishSettingsModalProps> = ({
@@ -24,6 +26,7 @@ const PublishSettingsModal: React.FC<PublishSettingsModalProps> = ({
   setisScheduled,
   onConfirm,
   onClose,
+  thumbnailBlob,
 }) => {
   // if (!isOpen) return null;
 useEffect(() => {
@@ -84,8 +87,8 @@ useEffect(() => {
             }
           </div>
           </div>
-          <div style={{flex:0.3, width:'100%',display:'flex', justifyContent:'flex-end'}}>
-            <img src="/img/t1.jpg" width={300} height={300} alt="asddas"/>
+          <div style={{position:'relative',flex:0.3, width:'100%',display:'flex', justifyContent:'flex-end'}}>
+            <Image src={(thumbnailBlob!=='' &&  typeof thumbnailBlob === 'string') ? thumbnailBlob : '/default.png'} alt="test" fill objectFit='contain'/>
           </div>
       </div>
 
