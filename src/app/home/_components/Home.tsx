@@ -4,7 +4,9 @@ import ContentTile from './ContentTile'
 import CardSwiper, { Content } from '@/app/_components/CardSwiper';
 import SVGIcon from '@/app/_components/SVGIcon';
 import styles from './home.module.css';
+import { useEditStore } from '@/store/editStore';
 export default function Home() {
+  const {count} = useEditStore();
     const [data, setData] = useState([]);
     useEffect(() => {
       const fetchData=async()=>{
@@ -25,7 +27,7 @@ export default function Home() {
     
   return (
     <div className={`${styles.container}`}>
-      <SVGIcon id="bank1" />
+      <div>count : {count}</div>
         <div className={`${styles._container}`}>
             <div className={`${styles.headerText} titleM`}></div>
           <CardSwiper data={data}/>

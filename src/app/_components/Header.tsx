@@ -32,7 +32,10 @@ export default function Header() {
               <a href="/editor"><SVGIcon id="menu" width={18} height={18} /></a>
               {
                 isToken && 
-                  <div className='bodyXS' onClick={()=>logout}>로그아웃</div>
+                  <div 
+                  className='bodyXS' 
+                  style={{cursor: 'pointer'}}
+                  onClick={()=>logout()}>로그아웃</div>
               }
             </div>
                 {/* <a href='/editor'>editor</a>

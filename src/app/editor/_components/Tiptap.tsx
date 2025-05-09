@@ -44,18 +44,9 @@ import { ImageWithCaption } from '../_components/extensions/ImageWithCaption';
 import PublishSettingsModal from './PublishSettingsModal';
 import { CustomParagraph } from './extensions/CustomParagraph';
 import { ResizableImage } from './extensions/ResizableImage';
+import { useEditStore } from '@/store/editStore';
+import FontOptions from './FontOptions';
 
-
-
-// const emojis = ['😀', '😂', '😍', '😎', '😢', '😡', '👍', '🎉', '🔥']
-
-
-// type Status = 'draft' | 'scheduled' | 'published'
-
-// interface TiptapEditorProps {
-//   id: string
-//   initialContent?: string
-// }
 Table.configure({
   HTMLAttributes: {
     class: 'my-custom-class',
@@ -68,8 +59,8 @@ interface Position {
 }
 
 export default function TiptapEditor() {
+  const {count,increase,decrease,reset} = useEditStore();
   const router = useRouter();
-
   
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -81,7 +72,7 @@ export default function TiptapEditor() {
   }, [])
     
     
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [showPicker, setShowPicker] = useState(false)
   const [position] = useState<Position>({ top: 0, left: 0 })
   const [status] = useState<'draft'| 'scheduled'| 'published'>('draft'); // 예시로 string
@@ -254,6 +245,7 @@ export default function TiptapEditor() {
       widgetRef.current.style.left = `${rect.left }px`;
       setIsWidgetPositioned(true); // ⛔ 이후 재실행 안 되게 막는다
     }
+    setLoading(false);
   }, []);
 
 //@todo S3에 맞게 변경
@@ -427,6 +419,7 @@ const addImage = useCallback(() => {
     
 
     const handleSubmit = async () => {
+      setLoading(true);
       if(!title){
         alert('제목을 입력하세요 !')
         return;
@@ -486,318 +479,325 @@ const addImage = useCallback(() => {
     };
 
   return (
-    <div className={`${styles['control-group']}` }>
-    <div className={`${styles.button_group}`}>
-          <button
-              onClick={() => setShowPicker(prev => !prev)}
-              // style={{background:'black'}}
-            >
-              <SVGIcon id="sentiment-satisfied" />
-            </button>
-            {showPicker && editor && (
-              <EmojiPicker
-              onSelect={handleEmojiSelect}
-              position={position}
-            />
-            )}
-          <button
-            onClick={() => {
-              const input = prompt('YouTube URL 또는 Video ID를 입력하세요 (예: dQw4w9WgXcQ 또는 https://www.youtube.com/watch?v=dQw4w9WgXcQ)');
-              if (!input) return;
-
-              let videoId = '';
-
-              try {
-                const url = new URL(input);
-                videoId = url.searchParams.get('v') || ''; // watch?v=xxxx 형태
-                if (!videoId && url.hostname === 'youtu.be') {
-                  videoId = url.pathname.slice(1); // youtu.be/xxxx 형태
-                }
-              } catch {
-                // URL이 아닌 경우 그냥 ID라고 가정
-                videoId = input;
-              }
-
-              if (videoId) {
-                const src = `https://www.youtube.com/embed/${videoId}`;
-                editor?.commands.setYouTubeVideo(src);
-              } else {
-                alert('유효한 YouTube URL 또는 ID가 아닙니다.');
-              }
-            }}
-          >
-            <SVGIcon id="youtube-activity" />
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleBulletList().run()}
-            className={editor.isActive('bulletList') ? 'is-active' : ''}
-          >
-            <SVGIcon id="list-bullet"/>
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleUnderline().run()}
-            className={editor.isActive('underline') ? 'is-active' : ''}
-          >
-            <SVGIcon id="underlined" />
-          </button>
-          {/* <button
-            onClick={() => editor.chain().focus().setUnderline().run()}
-            disabled={editor.isActive('underline')}
-          >
-            Set underline
-          </button>
-          <button
-            onClick={() => editor.chain().focus().unsetUnderline().run()}
-            disabled={!editor.isActive('underline')}
-          >
-            Unset underline
-          </button> */}
-          {/* <button
-            onClick={() => editor.chain().focus().toggleHighlight().run()}
-            className={editor.isActive('highlight') ? 'is-active' : ''}
-          >
-            <SVGIcon id="ink-highlighter"/>
-          </button> */}
-          <HighlightMenu
-            onSelect={handleHighlightColor}
-            isActive={editor.isActive('highlight')}
-            activeColor={editor.getAttributes('highlight')?.color}
-          />
-          {/* <button
-            onClick={() => editor.chain().focus().unsetHighlight().run()}
-            disabled={!editor.isActive('highlight')}
-          >
-            Unset highlight
-          </button> */}
-        <button
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            className={`bg-blue-500 text-white px-4 py-2 rounded ${editor.isActive('bold') ? 'is-active' : ''}`}
-          >
-            <SVGIcon id="bold" />
-        </button>
-        <button
-            onClick={() => editor.chain().focus().toggleBlockquote().run()}
-            className={editor.isActive('blockquote') ? 'is-active' : ''}
-        >
-          <SVGIcon id="format-quote" />
-        </button>
-        <button onClick={addImage}><SVGIcon id="format-image"/></button>
-          <button
-            onClick={() => editor.chain().focus().insertContent({
-              type: 'textBox',
-              content: [
-                {
-                  type: 'paragraph',
-                  content: [{ type: 'text', text: '텍스트 박스입니다!' }],
-                },
-              ],
-            }).run()
-            }
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            <SVGIcon id="text-box" />
-         </button>
-          <button className ={styles.editorBox}
-            onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: false  }).run()}>
-            <SVGIcon id="table" />
-          </button>
-          <button className ={styles.editorBox} onClick={() => editor.chain().focus().mergeCells().run()}><SVGIcon id='cell-merge' /></button>
-          {/* 테이블 관련 start */}
-          {/* <button className ={styles.editorBox} onClick={() => editor.chain().focus().addColumnBefore().run()}>
-            Add column before
-          </button>
-          <button className ={styles.editorBox} onClick={() => editor.chain().focus().addColumnAfter().run()}>Add column after</button>
-          <button className ={styles.editorBox} onClick={() => editor.chain().focus().deleteColumn().run()}>Delete column</button>
-          <button className ={styles.editorBox} onClick={() => editor.chain().focus().addRowBefore().run()}>Add row before</button>
-          <button className ={styles.editorBox} onClick={() => editor.chain().focus().addRowAfter().run()}>Add row after</button>
-          <button className ={styles.editorBox} onClick={() => editor.chain().focus().deleteRow().run()}>Delete row</button>
-          <button className ={styles.editorBox} onClick={() => editor.chain().focus().deleteTable().run()}>Delete table</button>
-          <button className ={styles.editorBox} onClick={() => editor.chain().focus().splitCell().run()}>Split cell</button>
-          <button className ={styles.editorBox} onClick={() => editor.chain().focus().toggleHeaderColumn().run()}>
-            Toggle header column
-          </button> 
-          <button className ={styles.editorBox} onClick={() => editor.chain().focus().toggleHeaderRow().run()}>
-            Toggle header row
-          </button>
-          <button className ={styles.editorBox} onClick={() => editor.chain().focus().toggleHeaderCell().run()}>
-            Toggle header cell
-          </button>
-          <button className ={styles.editorBox} onClick={() => editor.chain().focus().mergeOrSplit().run()}>Merge or split</button>
-          <button className ={styles.editorBox} onClick={() => editor.chain().focus().setCellAttribute('colspan', 2).run()}>
-            Set cell attribute
-          </button>
-          <button className ={styles.editorBox} onClick={() => editor.chain().focus().fixTables().run()}>Fix tables</button>
-          <button className ={styles.editorBox} onClick={() => editor.chain().focus().goToNextCell().run()}>Go to next cell</button>
-          <button className ={styles.editorBox} onClick={() => editor.chain().focus().goToPreviousCell().run()}>
-            Go to previous cell
-          </button>
-          */}
-          {/* 테이블 관련 end*/}
-          <button
-            onClick={() => editor.chain().focus().setTextAlign('left').run()}
-            className={`${editor.isActive({ textAlign: 'left' }) ? 'is-active' : ''}`}
-          >
-            <SVGIcon id="align-left"/>
-          </button>
-          <button
-            onClick={() => editor.chain().focus().setTextAlign('center').run()}
-            className={`${editor.isActive({ textAlign: 'center' }) ? 'is-active' : ''}`}
-          >
-            <SVGIcon id="align-center"/>
-          </button>
-          <button
-            onClick={() => editor.chain().focus().setTextAlign('right').run()}
-            className={`${editor.isActive({ textAlign: 'right' }) ? 'is-active' : ''}`}
-          >
-            <SVGIcon id="align-right"/>
-          </button>
-          <button
-            onClick={() => {
-              const currentClass = editor.getAttributes('paragraph').class || '';
-              const headlineL = typeof currentClass === 'string' && currentClass.includes('headlineL');
-
-              editor.chain().focus().updateAttributes('paragraph', {
-                class: headlineL ? null : 'headlineL',
-              }).run();
-            }}
-            className={editor.getAttributes('paragraph').class === 'headlineL' ? 'is-active' : ''}>
-          <SVGIcon id="h1"/>
-        </button>
-          <button
-            onClick={() => {
-              const currentClass = editor.getAttributes('paragraph').class || '';
-              const headlineM = typeof currentClass === 'string' && currentClass.includes('headlineM');
-
-              editor.chain().focus().updateAttributes('paragraph', {
-                class: headlineM ? null : 'headlineM',
-              }).run();
-            }}
-            className={editor.getAttributes('paragraph').class === 'headlineM' ? 'is-active' : ''}
-          >
-            <SVGIcon id="h2" />
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            className={`${editor.isActive({ level: 3 }) ? 'is-active' : ''}`}
-          >
-            <SVGIcon id="h3" />
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
-            className={`${editor.isActive({ level: 4 }) ? 'is-active' : ''}`}
-          >
-            <SVGIcon id="h4" />
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
-            className={`${editor.isActive({ level: 5 }) ? 'is-active' : ''}`}
-          >
-            <SVGIcon id="h5" />
-          </button>
-          <button
-            onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
-            className={`${editor.isActive({ level: 6 }) ? 'is-active' : ''}`}
-          >
-            <SVGIcon id="h6" />
-          </button>
-          <label htmlFor='thumbnail'>
-            <SVGIcon id="format-thumbnail" />
-            <input type="file" id="thumbnail" className={styles.thumbnailUpload} onChange={handleThumbnailUpload} style={{color:'black'}} />
-          </label>
-    </div>
-    <div className={styles.titleContainer}>
-      <input className={``} value={title||''} onChange={(e)=>setTitle(e.target.value)} placeholder='제목을 입력하세요'/>
-    </div>
-      <EditorContent editor={editor} className={styles.tiptap} />
-      {thumbnailPreview && <img src={ (thumbnailPreview !== '' && typeof thumbnailPreview === 'string') ? thumbnailPreview : '/default.png'} alt="썸네일 미리보기" style={{width:'auto',height:'auto', maxWidth:'300px', maxHeight:'300px', fill:'true', objectFit:'contain'}}/>}
-      <div>
-      {/* <label>
-        <input
-          type="radio"
-          name="status"
-          value="draft"
-          checked={status === 'draft'}
-          onChange={handleChange}
-        />
-        Draft
-      </label>
-      
-      <label>
-        <input
-          type="radio"
-          name="status"
-          value="scheduled"
-          checked={status === 'scheduled'}
-          onChange={handleChange}
-        />
-        Scheduled
-      </label>
-
-      <label>
-        <input
-          type="radio"
-          name="status"
-          value="published"
-          checked={status === 'published'}
-          onChange={handleChange}
-        />
-        Published
-      </label> */}
-      {/* <p>현재 상태: <strong>{status}</strong></p> */}
-    </div>
-    {showPopup && (
-      <div
-        className="absolute z-10 bg-white border rounded shadow"
-        style={{ top: popupPos.top, left: popupPos.left }}
-      >
-        <button onClick={() => editor.chain().focus().addColumnAfter().run()}>열 추가</button>
-        <button onClick={() => editor.chain().focus().deleteColumn().run()}>열 삭제</button>
-        <button onClick={() => editor.chain().focus().mergeCells().run()}>셀 병합</button>
+      <div className={`${styles['control-group']}` }>
+        <div style={{display:'flex',gap:'20px'}}>
+        <h2>Count: {count}</h2>
+        <button onClick={increase}>+1</button>
+        <button onClick={decrease}>-1</button>
+        <button onClick={reset}>Reset</button>
       </div>
-    )}
-    <div className={`${styles['content-aside']} ${isOpen && styles.none}`}>
-      <button 
-      onClick={()=>{
-        if(!title) {
-          const titleInput = document.querySelector(`.${styles.titleContainer} > input`);
-          titleInput?.classList.add('red');
-          return;
-        };
-        setIsOpen(!isOpen)
-        if(isOpen === true){
-          handleSubmit();
-        }
-      }}
-      className={`${styles.editcomplete}`}>완료</button>
-    </div>
-      {loading && <LoadingSpinner />}
-      {/* <p>
-        <strong>HTML Output:</strong>
-      </p>
-      <div
-      className={styles.gethtml}
-      style={{ 
-        // width:'700px',
-        wordBreak: 'break-word'
-      }}
-      dangerouslySetInnerHTML={{ __html: editor.getHTML() }} />
-      <div style={{
-        width:'100%',
-        wordBreak:'break-all'
-      }}>{editor.getHTML()}</div> */}
-    { 
-      <PublishSettingsModal 
-        isOpen={isOpen}
-        title={'제목 프롭스'} 
-        publishDate={new Date().toString()}
-        isScheduled={isScheduled}
-        setisScheduled={setisScheduled}
-        onChangePublishDate={()=>{}}
-        onClose={()=>{setIsOpen(false)}}
-        onConfirm={()=>handleSubmit()}
-        thumbnailBlob={thumbnailPreview}
-      />
-    }
-    </div>
+      <div className={`${styles.button_group}`}>
+            <button
+                onClick={() => setShowPicker(prev => !prev)}
+                // style={{background:'black'}}
+              >
+                <SVGIcon id="sentiment-satisfied" />
+              </button>
+              {showPicker && editor && (
+                <EmojiPicker
+                onSelect={handleEmojiSelect}
+                position={position}
+              />
+              )}
+            <button
+              onClick={() => {
+                const input = prompt('YouTube URL 또는 Video ID를 입력하세요 (예: dQw4w9WgXcQ 또는 https://www.youtube.com/watch?v=dQw4w9WgXcQ)');
+                if (!input) return;
+  
+                let videoId = '';
+  
+                try {
+                  const url = new URL(input);
+                  videoId = url.searchParams.get('v') || ''; // watch?v=xxxx 형태
+                  if (!videoId && url.hostname === 'youtu.be') {
+                    videoId = url.pathname.slice(1); // youtu.be/xxxx 형태
+                  }
+                } catch {
+                  // URL이 아닌 경우 그냥 ID라고 가정
+                  videoId = input;
+                }
+  
+                if (videoId) {
+                  const src = `https://www.youtube.com/embed/${videoId}`;
+                  editor?.commands.setYouTubeVideo(src);
+                } else {
+                  alert('유효한 YouTube URL 또는 ID가 아닙니다.');
+                }
+              }}
+            >
+              <SVGIcon id="youtube-activity" />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().toggleBulletList().run()}
+              className={editor.isActive('bulletList') ? 'is-active' : ''}
+            >
+              <SVGIcon id="list-bullet"/>
+            </button>
+            <button
+              onClick={() => editor.chain().focus().toggleUnderline().run()}
+              className={editor.isActive('underline') ? 'is-active' : ''}
+            >
+              <SVGIcon id="underlined" />
+            </button>
+            {/* <button
+              onClick={() => editor.chain().focus().setUnderline().run()}
+              disabled={editor.isActive('underline')}
+            >
+              Set underline
+            </button>
+            <button
+              onClick={() => editor.chain().focus().unsetUnderline().run()}
+              disabled={!editor.isActive('underline')}
+            >
+              Unset underline
+            </button> */}
+            {/* <button
+              onClick={() => editor.chain().focus().toggleHighlight().run()}
+              className={editor.isActive('highlight') ? 'is-active' : ''}
+            >
+              <SVGIcon id="ink-highlighter"/>
+            </button> */}
+            <HighlightMenu
+              onSelect={handleHighlightColor}
+              isActive={editor.isActive('highlight')}
+              activeColor={editor.getAttributes('highlight')?.color}
+            />
+            {/* <button
+              onClick={() => editor.chain().focus().unsetHighlight().run()}
+              disabled={!editor.isActive('highlight')}
+            >
+              Unset highlight
+            </button> */}
+          <button
+              onClick={() => editor.chain().focus().toggleBold().run()}
+              className={`bg-blue-500 text-white px-4 py-2 rounded ${editor.isActive('bold') ? 'is-active' : ''}`}
+            >
+              <SVGIcon id="bold" />
+          </button>
+          <button
+              onClick={() => editor.chain().focus().toggleBlockquote().run()}
+              className={editor.isActive('blockquote') ? 'is-active' : ''}
+          >
+            <SVGIcon id="format-quote" />
+          </button>
+          <button onClick={addImage}><SVGIcon id="format-image"/></button>
+            <button
+              onClick={() => editor.chain().focus().insertContent({
+                type: 'textBox',
+                content: [
+                  {
+                    type: 'paragraph',
+                    content: [{ type: 'text', text: '텍스트 박스입니다!' }],
+                  },
+                ],
+              }).run()
+              }
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              <SVGIcon id="text-box" />
+           </button>
+            <button className ={styles.editorBox}
+              onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: false  }).run()}>
+              <SVGIcon id="table" />
+            </button>
+            <button className ={styles.editorBox} onClick={() => editor.chain().focus().mergeCells().run()}><SVGIcon id='cell-merge' /></button>
+            {/* 테이블 관련 start */}
+            {/* <button className ={styles.editorBox} onClick={() => editor.chain().focus().addColumnBefore().run()}>
+              Add column before
+            </button>
+            <button className ={styles.editorBox} onClick={() => editor.chain().focus().addColumnAfter().run()}>Add column after</button>
+            <button className ={styles.editorBox} onClick={() => editor.chain().focus().deleteColumn().run()}>Delete column</button>
+            <button className ={styles.editorBox} onClick={() => editor.chain().focus().addRowBefore().run()}>Add row before</button>
+            <button className ={styles.editorBox} onClick={() => editor.chain().focus().addRowAfter().run()}>Add row after</button>
+            <button className ={styles.editorBox} onClick={() => editor.chain().focus().deleteRow().run()}>Delete row</button>
+            <button className ={styles.editorBox} onClick={() => editor.chain().focus().deleteTable().run()}>Delete table</button>
+            <button className ={styles.editorBox} onClick={() => editor.chain().focus().splitCell().run()}>Split cell</button>
+            <button className ={styles.editorBox} onClick={() => editor.chain().focus().toggleHeaderColumn().run()}>
+              Toggle header column
+            </button> 
+            <button className ={styles.editorBox} onClick={() => editor.chain().focus().toggleHeaderRow().run()}>
+              Toggle header row
+            </button>
+            <button className ={styles.editorBox} onClick={() => editor.chain().focus().toggleHeaderCell().run()}>
+              Toggle header cell
+            </button>
+            <button className ={styles.editorBox} onClick={() => editor.chain().focus().mergeOrSplit().run()}>Merge or split</button>
+            <button className ={styles.editorBox} onClick={() => editor.chain().focus().setCellAttribute('colspan', 2).run()}>
+              Set cell attribute
+            </button>
+            <button className ={styles.editorBox} onClick={() => editor.chain().focus().fixTables().run()}>Fix tables</button>
+            <button className ={styles.editorBox} onClick={() => editor.chain().focus().goToNextCell().run()}>Go to next cell</button>
+            <button className ={styles.editorBox} onClick={() => editor.chain().focus().goToPreviousCell().run()}>
+              Go to previous cell
+            </button>
+            */}
+            {/* 테이블 관련 end*/}
+            <button
+              onClick={() => editor.chain().focus().setTextAlign('left').run()}
+              className={`${editor.isActive({ textAlign: 'left' }) ? 'is-active' : ''}`}
+            >
+              <SVGIcon id="align-left"/>
+            </button>
+            <button
+              onClick={() => editor.chain().focus().setTextAlign('center').run()}
+              className={`${editor.isActive({ textAlign: 'center' }) ? 'is-active' : ''}`}
+            >
+              <SVGIcon id="align-center"/>
+            </button>
+            <button
+              onClick={() => editor.chain().focus().setTextAlign('right').run()}
+              className={`${editor.isActive({ textAlign: 'right' }) ? 'is-active' : ''}`}
+            >
+              <SVGIcon id="align-right"/>
+            </button>
+            <FontOptions editor={editor}/>
+            {/* <button
+              onClick={() => {
+                const currentClass = editor.getAttributes('paragraph').class || '';
+                const headlineL = typeof currentClass === 'string' && currentClass.includes('headlineL');
+  
+                editor.chain().focus().updateAttributes('paragraph', {
+                  class: headlineL ? null : 'headlineL',
+                }).run();
+              }}
+              className={editor.getAttributes('paragraph').class === 'headlineL' ? 'is-active' : ''}>
+            <SVGIcon id="h1"/>
+          </button>
+            <button
+              onClick={() => {
+                const currentClass = editor.getAttributes('paragraph').class || '';
+                const headlineM = typeof currentClass === 'string' && currentClass.includes('headlineM');
+  
+                editor.chain().focus().updateAttributes('paragraph', {
+                  class: headlineM ? null : 'headlineM',
+                }).run();
+              }}
+              className={editor.getAttributes('paragraph').class === 'headlineM' ? 'is-active' : ''}
+            >
+              <SVGIcon id="h2" />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+              className={`${editor.isActive({ level: 3 }) ? 'is-active' : ''}`}
+            >
+              <SVGIcon id="h3" />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+              className={`${editor.isActive({ level: 4 }) ? 'is-active' : ''}`}
+            >
+              <SVGIcon id="h4" />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
+              className={`${editor.isActive({ level: 5 }) ? 'is-active' : ''}`}
+            >
+              <SVGIcon id="h5" />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
+              className={`${editor.isActive({ level: 6 }) ? 'is-active' : ''}`}
+            >
+              <SVGIcon id="h6" />
+            </button> */}
+            <label htmlFor='thumbnail'>
+              <SVGIcon id="format-thumbnail" />
+              <input type="file" id="thumbnail" className={styles.thumbnailUpload} onChange={handleThumbnailUpload} style={{color:'black'}} />
+            </label>
+      </div>
+      <div className={styles.titleContainer}>
+        <input className={``} value={title||''} onChange={(e)=>setTitle(e.target.value)} placeholder='제목을 입력하세요'/>
+      </div>
+        <EditorContent editor={editor} className={styles.tiptap} />
+        {thumbnailPreview && <img src={ (thumbnailPreview !== '' && typeof thumbnailPreview === 'string') ? thumbnailPreview : '/default.png'} alt="썸네일 미리보기" style={{width:'auto',height:'auto', maxWidth:'300px', maxHeight:'300px', fill:'true', objectFit:'contain'}}/>}
+        <div>
+        {/* <label>
+          <input
+            type="radio"
+            name="status"
+            value="draft"
+            checked={status === 'draft'}
+            onChange={handleChange}
+          />
+          Draft
+        </label>
+        
+        <label>
+          <input
+            type="radio"
+            name="status"
+            value="scheduled"
+            checked={status === 'scheduled'}
+            onChange={handleChange}
+          />
+          Scheduled
+        </label>
+  
+        <label>
+          <input
+            type="radio"
+            name="status"
+            value="published"
+            checked={status === 'published'}
+            onChange={handleChange}
+          />
+          Published
+        </label> */}
+        {/* <p>현재 상태: <strong>{status}</strong></p> */}
+      </div>
+      {showPopup && (
+        <div
+          className="absolute z-10 bg-white border rounded shadow"
+          style={{ top: popupPos.top, left: popupPos.left }}
+        >
+          <button onClick={() => editor.chain().focus().addColumnAfter().run()}>열 추가</button>
+          <button onClick={() => editor.chain().focus().deleteColumn().run()}>열 삭제</button>
+          <button onClick={() => editor.chain().focus().mergeCells().run()}>셀 병합</button>
+        </div>
+      )}
+      <div className={`${styles['content-aside']} ${isOpen && styles.none}`}>
+        <button 
+        onClick={()=>{
+          if(!title) {
+            const titleInput = document.querySelector(`.${styles.titleContainer} > input`);
+            titleInput?.classList.add('red');
+            return;
+          };
+          setIsOpen(!isOpen)
+          if(isOpen === true){
+            handleSubmit();
+          }
+        }}
+        className={`${styles.editcomplete}`}>완료</button>
+      </div>
+        {loading && <LoadingSpinner />}
+        {/* <p>
+          <strong>HTML Output:</strong>
+        </p>
+        <div
+        className={styles.gethtml}
+        style={{ 
+          // width:'700px',
+          wordBreak: 'break-word'
+        }}
+        dangerouslySetInnerHTML={{ __html: editor.getHTML() }} />
+        <div style={{
+          width:'100%',
+          wordBreak:'break-all'
+        }}>{editor.getHTML()}</div> */}
+      { 
+        <PublishSettingsModal 
+          isOpen={isOpen}
+          title={'제목 프롭스'} 
+          publishDate={new Date().toString()}
+          isScheduled={isScheduled}
+          setisScheduled={setisScheduled}
+          onChangePublishDate={()=>{}}
+          onClose={()=>{setIsOpen(false)}}
+          onConfirm={()=>handleSubmit()}
+          thumbnailBlob={thumbnailPreview}
+        />
+      }
+      </div>
   )
 }
