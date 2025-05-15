@@ -41,6 +41,7 @@ useEffect(() => {
           display:'flex',
           width:'100%',
           height : '300px',
+          justifyContent:'space-between'
         }}>
           <div 
           style={{
@@ -87,8 +88,17 @@ useEffect(() => {
             }
           </div>
           </div>
-          <div style={{position:'relative',flex:0.3, width:'100%',display:'flex', justifyContent:'flex-end'}}>
-            <Image src={(thumbnailBlob!=='' &&  typeof thumbnailBlob === 'string') ? thumbnailBlob : '/default.png'} alt="test" fill objectFit='contain'/>
+          <div style={{position:'relative',flex:0.3,width:'100%',display:'flex', justifyContent:'baseline'}}>
+            <img 
+            src={(thumbnailBlob!=='' &&  typeof thumbnailBlob === 'string') ? thumbnailBlob : '/default.png'} 
+            alt="test" 
+            style={{
+              width:'100%',
+              height : 'auto',
+              objectFit:'cover',
+              objectPosition:'center'
+            }}
+            />
           </div>
       </div>
 

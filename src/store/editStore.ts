@@ -9,6 +9,8 @@ interface EditState {
   reset: () => void
   authtoken:string
   setAuthToken:(token:string)=>void
+  username : string
+  login : (username:string)=>void
 }
 
 export const useEditStore = create<EditState>()(
@@ -16,10 +18,12 @@ export const useEditStore = create<EditState>()(
     (set) => ({
       count: 0,
       authtoken:'',
+      username:'',
       increase: () => set((state) => ({ count: state.count + 1 })),
       decrease: () => set((state) => ({ count: state.count - 1 })),
       reset: () => set({ count: 0 }),
-      setAuthToken:(token:string)=>set({authtoken:token})
+      setAuthToken:(token:string)=>set({authtoken:token}),
+      login : (username:string)=>set(({username}))
     }),
     {
       name: 'edit-store', // localStorage 키 이름

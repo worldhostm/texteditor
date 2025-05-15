@@ -16,7 +16,6 @@
 }
 
 .editorBox {
-    background-color: #e5e7eb; /* Tailwind의 bg-gray-200 */
     width: auto;
     height: auto;
     border-radius: 8px;
@@ -25,6 +24,8 @@
   }
 
   .control-group{
+    width: auto;
+    height: auto;
     /* margin-top: 120px; */
     position: relative;
     display: flex;
@@ -65,11 +66,12 @@
     border : 1px solid #eaeaea;
     padding : 20px;
     width: 1200px;
-    min-height: 50vh;
+    min-height: 20vh;
     display: flex;
     justify-content: center;
     flex-direction: column;
     align-items: center;
+    bottom:66px !important;
   }
   .ProseMirror{
     width: 800px;
@@ -136,7 +138,7 @@
   height: auto;
 }
 .button_group button{
-  margin-left: 8px;
+  margin-left: 14px;
 }
 
 .editcomplete:hover{

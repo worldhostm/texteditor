@@ -1,5 +1,6 @@
 'use client'
 
+import { useEditStore } from '@/store/editStore';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
@@ -7,6 +8,7 @@ export default function Login() {
     const [id, setId] = useState('')
     const [password, setPassword] = useState('');
     const router = useRouter();
+    const {login ,username} = useEditStore();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -30,6 +32,7 @@ export default function Login() {
             console.log(data) // 예: 토큰 or 사용자 정보
             router.push('/editor');
             localStorage.setItem('token', JSON.stringify(data.token));
+            login(id);
         } else {
             alert(`❌ 로그인 실패: ${data.message}`)
         }

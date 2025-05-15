@@ -46,6 +46,7 @@ import { CustomParagraph } from './extensions/CustomParagraph';
 import { ResizableImage } from './extensions/ResizableImage';
 import { useEditStore } from '@/store/editStore';
 import FontOptions from './FontOptions';
+import { Content } from '@/model/Content';
 
 Table.configure({
   HTMLAttributes: {
@@ -58,10 +59,15 @@ interface Position {
   left: number
 }
 
-export default function TiptapEditor() {
+interface Props{
+  detaildata ?: Content
+  isEdit : boolean
+}
+
+export default function TiptapEditor({detaildata, isEdit}:Props) {
   const {count,increase,decrease,reset} = useEditStore();
   const router = useRouter();
-  
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('token');
@@ -79,7 +85,7 @@ export default function TiptapEditor() {
   const [title, setTitle] = useState('');
   //테이블 위젯
   const [showPopup, setShowPopup] = useState(false);
-  const [popupPos] = useState({ top: 0, left: 0 });
+  const [popupPos,setPopupPos] = useState({ top: 0, left: 0 });
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isScheduled, setisScheduled] = useState<boolean>(false);
   const widgetRef = useRef<HTMLDivElement | null>(null);
@@ -234,11 +240,22 @@ export default function TiptapEditor() {
     content:``,
   })
 
+  
+  useEffect(() => {
+    if (editor && detaildata) {
+      setTitle(detaildata.title);
+      editor.commands.setContent(detaildata.content);
+      setThumbnailPreview(detaildata.thumbnail)
+    }
+  }, [editor, detaildata])
+
   useEffect(() => {
     if (isWidgetPositioned) return;
     const tableWrapper = document.querySelector('.tableWrapper') as HTMLElement;
     if (tableWrapper && widgetRef.current) {
       const rect = tableWrapper.getBoundingClientRect();
+      console.info('tableWrapper ::',tableWrapper.clientTop);
+      console.info('clientTop ::',widgetRef.current.clientTop);
       widgetRef.current.style.position = 'absolute';
       widgetRef.current.style.top = popupPos.top.toString();
       // `${rect.top - 50}px`;
@@ -246,7 +263,7 @@ export default function TiptapEditor() {
       setIsWidgetPositioned(true); // ⛔ 이후 재실행 안 되게 막는다
     }
     setLoading(false);
-  }, []);
+  }, [widgetRef]);
 
 //@todo S3에 맞게 변경
 const addImage = useCallback(() => {
@@ -285,7 +302,13 @@ const addImage = useCallback(() => {
     // reader.readAsDataURL(file);
     // reader.onloadend = () => {
     //   setThumbnail(reader.result);
-   	// };    
+   	// };
+    
+    if(detaildata?.thumbnail){
+      setThumbnailPreview(detaildata?.thumbnail);
+      return;
+    }
+
     const file = e.target.files?.[0]
     if (!file || !file.type.startsWith('image/')) return
     // 파일 상태값 세팅
@@ -343,11 +366,11 @@ const addImage = useCallback(() => {
       const domNode = domAtPos.node as HTMLElement
       if (domNode.closest('th') || domNode.closest('td')) {
         // 위치 계산 후 "..." 메뉴 띄우기
-        const cell = domNode.closest('th') || domNode.closest('td')
+        const cell = domNode.closest('table');
         const rect = cell?.getBoundingClientRect()
     
         if (rect) {
-          // setPopupPos({ top: rect.top, left: rect.left + rect.width - 20 })
+          setPopupPos({ top: rect.top + 50, left: rect.left - 300 + rect.width - 20 })
           setShowPopup(true)
         }
       } else {
@@ -480,13 +503,9 @@ const addImage = useCallback(() => {
 
   return (
       <div className={`${styles['control-group']}` }>
-        <div style={{display:'flex',gap:'20px'}}>
-        <h2>Count: {count}</h2>
-        <button onClick={increase}>+1</button>
-        <button onClick={decrease}>-1</button>
-        <button onClick={reset}>Reset</button>
-      </div>
       <div className={`${styles.button_group}`}>
+            {/* 폰트 커스텀 셀렉트 박스 */}
+            <FontOptions editor={editor}/>
             <button
                 onClick={() => setShowPicker(prev => !prev)}
                 // style={{background:'black'}}
@@ -650,7 +669,6 @@ const addImage = useCallback(() => {
             >
               <SVGIcon id="align-right"/>
             </button>
-            <FontOptions editor={editor}/>
             {/* <button
               onClick={() => {
                 const currentClass = editor.getAttributes('paragraph').class || '';
@@ -708,6 +726,19 @@ const addImage = useCallback(() => {
       <div className={styles.titleContainer}>
         <input className={``} value={title||''} onChange={(e)=>setTitle(e.target.value)} placeholder='제목을 입력하세요'/>
       </div>
+      {showPopup && (
+        <div
+          ref={widgetRef}
+          style={{ 
+            position:'absolute',top: popupPos.top - 150, left: popupPos.left - 550, border : '1px solid var(--gray-300)',
+            display:'flex', alignItems:'center',justifyContent:'center'
+          }}
+        >
+          <button onClick={() => editor.chain().focus().addColumnAfter().run()}><SVGIcon id="add-column-right" /></button>
+          <button onClick={() => editor.chain().focus().deleteColumn().run()}><SVGIcon id="table-delete-column" /></button>
+          <button onClick={() => editor.chain().focus().mergeCells().run()}><SVGIcon id="cell-merge" /></button>
+        </div>
+      )}
         <EditorContent editor={editor} className={styles.tiptap} />
         {thumbnailPreview && <img src={ (thumbnailPreview !== '' && typeof thumbnailPreview === 'string') ? thumbnailPreview : '/default.png'} alt="썸네일 미리보기" style={{width:'auto',height:'auto', maxWidth:'300px', maxHeight:'300px', fill:'true', objectFit:'contain'}}/>}
         <div>
@@ -745,16 +776,6 @@ const addImage = useCallback(() => {
         </label> */}
         {/* <p>현재 상태: <strong>{status}</strong></p> */}
       </div>
-      {showPopup && (
-        <div
-          className="absolute z-10 bg-white border rounded shadow"
-          style={{ top: popupPos.top, left: popupPos.left }}
-        >
-          <button onClick={() => editor.chain().focus().addColumnAfter().run()}>열 추가</button>
-          <button onClick={() => editor.chain().focus().deleteColumn().run()}>열 삭제</button>
-          <button onClick={() => editor.chain().focus().mergeCells().run()}>셀 병합</button>
-        </div>
-      )}
       <div className={`${styles['content-aside']} ${isOpen && styles.none}`}>
         <button 
         onClick={()=>{

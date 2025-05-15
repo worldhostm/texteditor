@@ -1,0 +1,128 @@
+/* Pagination.module.css */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 64rem;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+  
+  .pageInfo {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .pageTitle {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  
+  .pageSubtitle {
+    color: #666;
+  }
+  
+  .dataContainer {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+  }
+  
+  .loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 24rem;
+  }
+  
+  .loadingText {
+    font-size: 1.125rem;
+  }
+  
+  .itemList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: none;
+  }
+  
+  .item {
+    padding: 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  
+  .item:last-child {
+    border-bottom: none;
+  }
+  
+  .item:hover {
+    background-color: #f7fafc;
+  }
+  
+  .paginationControls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  .button {
+    padding: 10px;
+    width: 24px ;
+    height: 24px ;
+    border: none;
+    border-radius: 8px;
+    /* background-color: var(--primary-500); */
+    color: black;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .button:hover {
+    background-color: #ebf8ff;
+  }
+  
+  .activeButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px ;
+    height: 24px ;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--primary-500);
+    color: white;
+    cursor: pointer;
+  }
+  
+  .buttonDisabled {
+    /* padding:10px; */
+    /* padding: 0.25rem 0.75rem; */
+    border: none;
+    /* border-radius: 0.25rem; */
+    /* background-color: #f7fafc; */
+    color: #a0aec0;
+    cursor: not-allowed;
+  }
+  
+  .pageInput {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .inputField {
+    width: 4rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+    text-align: center;
+  }

@@ -5,6 +5,7 @@ import CardSwiper, { Content } from '@/app/_components/CardSwiper';
 import SVGIcon from '@/app/_components/SVGIcon';
 import styles from './home.module.css';
 import { useEditStore } from '@/store/editStore';
+import Pagination from '@/app/_components/Pagination';
 export default function Home() {
   const {count} = useEditStore();
     const [data, setData] = useState([]);
@@ -18,7 +19,7 @@ export default function Home() {
         });
         if(res.ok){
             const response = await res.json()
-            setData(response);
+            setData(response.data);
         }
       }
       fetchData();
@@ -27,7 +28,7 @@ export default function Home() {
     
   return (
     <div className={`${styles.container}`}>
-      <div>count : {count}</div>
+        {/* <div>count : {count}</div>
         <div className={`${styles._container}`}>
             <div className={`${styles.headerText} titleM`}></div>
           <CardSwiper data={data}/>
@@ -39,7 +40,7 @@ export default function Home() {
           <SVGIcon id="swipe" className='shake'/>
             카드를 스크롤 해보세요
           </div>
-        </div>
+        </div> */}
         <div 
         className={styles.underContainer}
         >
@@ -60,6 +61,7 @@ export default function Home() {
                                                   />)
         }
         </div>
+        <Pagination />
     </div>
   )
 }

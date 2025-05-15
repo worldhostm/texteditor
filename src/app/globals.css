@@ -366,12 +366,14 @@ p:empty::before {
 body {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: c; */
   align-items: center;
   overflow-x: hidden;
   color: var(--foreground);
   background: var(--background);
   font-family: 'Pretendard-Regular';
+  min-height: 100vh;
+  width: 100%;
 }
 * {
   box-sizing: border-box;
@@ -394,7 +396,7 @@ a {
 .tiptap[role="textbox"]{
   width: 100%;
   height: auto;
-  min-height: 50vh;
+  min-height: 370px;
   padding : 40px;
   outline:none;
   margin-bottom: 200px;
@@ -489,10 +491,14 @@ a {
   display: flex;
   align-items: center;
   margin-top:40px;
+  margin-bottom: 60px;
   flex-direction: column;
   padding : 0px 16px;
 }
 
+.tiptap img{
+  max-width:700px !important;
+}
 .contentRender >*>figure>img{
   max-width:700px;
   width: 100%;
@@ -595,8 +601,9 @@ h1{
 }
 
 .heading-dropdown{
-  position: absolute;
-  width: 200px;
+  position: relative;
+  width: auto;
+  min-width: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -604,13 +611,16 @@ h1{
   right: 0;
 }
 .dropdown-menu{
+  position: absolute;
+  top: 50px;
+  left: 10px;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: baseline;
   gap: 8px;
   z-index: 1;
-  /* background-color: var(--gray-100); */
+  background-color: white;
 }
 .dropdown-item{
   border-bottom: 1px solid var(--gray-300);

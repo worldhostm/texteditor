@@ -1,6 +1,8 @@
 import "./globals.css";
 import Header from "./_components/Header";
 import { Metadata } from "next";
+import Footer from "./_components/Footer";
+import { headers } from "next/headers";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -38,6 +40,7 @@ export default function RootLayout({
       <body>
         <Header/>
         {children}
+        <Footer />
       </body>
     </html>
   );
