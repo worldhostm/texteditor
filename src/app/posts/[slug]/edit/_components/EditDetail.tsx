@@ -6,7 +6,7 @@ import TiptapEditor from '@/app/editor/_components/Tiptap'
 import { Content } from '@/model/Content'
 
 interface Props{
-  id:number
+  id:string
 }
 export default function EditDetail({id}:Props) {
   const [isLoading, setIsLoading] = useState(true);

@@ -5,7 +5,6 @@ import RichContentRenderer from './RichContentRender';
 import { useEditStore } from '@/store/editStore';
 import { useRouter } from 'next/navigation';
 // import { useEditStore } from '@/store/editStore';
-// import { useRouter } from 'next/navigation';
 
 interface Props {
   id: string
@@ -37,7 +36,7 @@ export default function Post({ id}: Props) {
       })
   }, [id]);
 
-  const deleteDetail=async(id:number)=>{
+  const deleteDetail=async(id:string)=>{
     fetch(`/api/detail/${id}`,{method:'DELETE',})
   }
 
@@ -56,7 +55,7 @@ export default function Post({ id}: Props) {
       }}>
       </div>
       <RichContentRenderer html={html} title={title} />
-      {/* {
+      {
         username &&
           <div 
           className='pretendard-regular bodyXS'
@@ -70,7 +69,7 @@ export default function Post({ id}: Props) {
           }}>
             <div 
               style={{display:'flex',justifyContent:'center',alignItems:'center',minWidth:'60px',borderRadius:'24px', border:'1px solid var(--gray-300)', padding:'6px', color:'var(--gray-500)'}}      
-              onClick={()=>{window.location.href(`/posts/${id}/edit`)}}
+              onClick={()=>{router.push(`/posts/${id}/edit`)}}
               >
             수정</div>
             <div style={{display:'flex',justifyContent:'center',alignItems:'center',minWidth:'60px',borderRadius:'24px', border:'1px solid var(--gray-300)', padding:'6px', color:'var(--gray-500)'}} 
@@ -78,7 +77,7 @@ export default function Post({ id}: Props) {
             <div style={{display:'flex',justifyContent:'center',alignItems:'center',minWidth:'60px',borderRadius:'24px', border:'1px solid var(--gray-300)', padding:'6px', color:'var(--gray-500)'}} 
             onClick={()=>{}}>비공개로 변경</div>
           </div>
-      } */}
+      }
     </>
   )
 }
