@@ -70,7 +70,6 @@ export default function RichContentRenderer({ html, title}: Props) {
               }}
             >{title}</div>
             <div
-            className='pretendard_regular'
             style={{
               width:'100%',
               maxWidth:'700px',

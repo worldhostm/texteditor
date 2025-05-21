@@ -254,8 +254,6 @@ export default function TiptapEditor({detaildata, isEdit}:Props) {
     const tableWrapper = document.querySelector('.tableWrapper') as HTMLElement;
     if (tableWrapper && widgetRef.current) {
       const rect = tableWrapper.getBoundingClientRect();
-      console.info('tableWrapper ::',tableWrapper.clientTop);
-      console.info('clientTop ::',widgetRef.current.clientTop);
       widgetRef.current.style.position = 'absolute';
       widgetRef.current.style.top = popupPos.top.toString();
       // `${rect.top - 50}px`;

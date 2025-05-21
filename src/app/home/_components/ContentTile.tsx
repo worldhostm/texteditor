@@ -1,4 +1,4 @@
-'use client'
+// 'use client'
 import React from 'react'
 import styles from './contentTile.module.css';
 import SVGIcon from '@/app/_components/SVGIcon';
@@ -17,7 +17,7 @@ export default function ContentTile({id,idx,thumbnail,title,regDate='2024.04.02'
     !isCard
     ?
     <div className={`${styles.container}`} key={title + idx}>
-        <a href={`/posts/${id}`}>
+        <a href={`posts/${id}`}>
             <div className={`${styles.tileimg}`} style={{backgroundImage:`url('${thumbnail}')`}}></div>
             <div className={`${styles.tileText}`}>
               <div className={`${styles.title} bodyS`}>{title ? title : '제목없음'}</div>

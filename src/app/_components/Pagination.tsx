@@ -4,7 +4,7 @@ import styles from './pagination.module.css';
 import SVGIcon from './SVGIcon';
 
 // 인터페이스 정의
-interface PaginationProps {
+export interface PaginationProps {
   initialPage?: number;
   itemsPerPage?: number;
   totalItems?: number;
@@ -20,6 +20,7 @@ const Pagination: FC<PaginationProps> = ({
   pageBlockSize = 5,
   onPageChange,
 }) => {
+  console.info('initialPage :: ',initialPage,'totalItems :: ',totalItems,'initialPage :: ');
   // 상태 관리
   const [currentPage, setCurrentPage] = useState<number>(initialPage);
   const [data, setData] = useState<string[]>([]);

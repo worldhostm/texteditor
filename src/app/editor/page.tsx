@@ -3,6 +3,6 @@ import TiptapEditor from './_components/Tiptap';
 
 export default function page() {
   return (
-    <TiptapEditor/>
+    <TiptapEditor isEdit={false}/>
   )
 }

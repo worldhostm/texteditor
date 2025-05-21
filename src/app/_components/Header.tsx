@@ -26,7 +26,7 @@ export default function Header() {
   return (
     <div className={`${styles.container}`}>
         <div className={`${styles.contentContainer}`}> 
-            <a href="/home"><SVGIcon width={18} height={18} id="arrow-back"/></a>
+            <a href={`${process.env.NEXT_PUBLIC_S3_BUCKET_NAME}/home.html`}><SVGIcon width={18} height={18} id="arrow-back"/></a>
             <a href={`/home`} className='titleS pretendard-regular'>하나 콘텐츠 뷰어</a>
             <div style={{display:'flex',gap:'20px'}}>
               <a href="/editor"><SVGIcon id="menu" width={18} height={18} /></a>

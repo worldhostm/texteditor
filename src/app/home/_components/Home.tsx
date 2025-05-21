@@ -1,33 +1,63 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+
+import React ,{ useEffect, useState } from 'react';
 import ContentTile from './ContentTile'
 import CardSwiper, { Content } from '@/app/_components/CardSwiper';
 import SVGIcon from '@/app/_components/SVGIcon';
 import styles from './home.module.css';
 import { useEditStore } from '@/store/editStore';
-import Pagination from '@/app/_components/Pagination';
-export default function Home() {
+import Pagination, { PaginationProps } from '@/app/_components/Pagination';
+import {Content as ModelContent} from '@/model/Content';
+
+// export async function  generateStaticParams(){
+//   const posts = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/list`, {}).then((res)=>res.json());
+//   return posts.data.map((e:ModelContent)=>e);
+// }
+export default function Home({params}:any) {
+  // const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/list`, {
+  //   cache: 'force-cache', // ✅ SSG로 강제
+  // });
+  // const { data: posts } = await res.json();
+
   const {count} = useEditStore();
-    const [data, setData] = useState([]);
-    useEffect(() => {
-      const fetchData=async()=>{
-        const res = await fetch('/api/list',{
-            method:'GET',
-            headers:{
-                'Content-Type' : 'application/json'
-            }
-        });
-        if(res.ok){
-            const response = await res.json()
-            setData(response.data);
-        }
+
+  const [data, setData] = useState([]);
+  const [pageProps, setPageProps] = useState<PaginationProps>()
+  useEffect(() => {
+    const fetchData=async()=>{
+      const res = await fetch('/api/list',{
+          method:'GET',
+          headers:{
+              'Content-Type' : 'application/json'
+          }
+      });
+      if(res.ok){
+          const response = await res.json()
+          setData(response.data);
+          setPageProps({...response});
       }
-      fetchData();
-      return () => {}
-    }, [])
+    }
+    fetchData();
+    return () => {}
+  }, [])
     
   return (
     <div className={`${styles.container}`}>
+      <div style={{
+        width:'100%',
+        display:'flex',
+        justifyContent:'baseline',
+        flexDirection:'column',
+        color : 'var(--primary-500)'
+      }}>
+        <div className='hana_bold headlineL'>
+          Hana Jounals
+        </div>
+        <div className='pretendard-regular' 
+        style={{color:'black'}}>
+          은행 방문보다 쉬운 생활 금융 팁팁
+        </div>
+      </div>
         {/* <div>count : {count}</div>
         <div className={`${styles._container}`}>
             <div className={`${styles.headerText} titleM`}></div>
@@ -49,7 +79,7 @@ export default function Home() {
         </div>
         <div className={`${styles.underContainer_upper}`}>
         {
-            data.map((contents:Content,index)=> <ContentTile 
+            data.map((contents:Content,index:number)=> <ContentTile 
                                                     id={contents.id} 
                                                     key={contents.title +'$$$' +index} 
                                                     idx={index} 
@@ -61,7 +91,8 @@ export default function Home() {
                                                   />)
         }
         </div>
-        <Pagination />
+        {/* 페이지네이션 추후 적용 0520 */}
+        {/* <Pagination {...pageProps}/> */}
     </div>
   )
 }
