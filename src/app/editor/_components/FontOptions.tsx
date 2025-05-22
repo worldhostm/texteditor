@@ -32,7 +32,15 @@ export default function FontOptions({ editor }: Props) {
   const current = headingOptions.find(opt => opt.isActive(editor))?.label || '글꼴 선택'
 
   return (
-    <div className="heading-dropdown" ref={ref}>
+    <div 
+    className="heading-dropdown" 
+    ref={ref}
+    style={{
+      position:'fixed',
+      top:'50%',
+      right:'2%',
+    }}
+    >
       <button className="dropdown-trigger" onClick={() => setIsOpen(!isOpen)}>
         {current}
       </button>

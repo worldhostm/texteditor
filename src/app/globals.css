@@ -454,6 +454,7 @@ a {
   blockquote {
     border-left: 3px solid var(--gray-500);
     padding-left: 1rem;
+    color : var(--gray-500);
   }
 }
 .tableWrapper {

@@ -9,7 +9,7 @@ interface Props {
     className?:string
 }
 
-export default function SVGIcon({id,width=28,height=29, isResponsive,className}:Props) {
+export default function SVGIcon({id,width=24,height=24, isResponsive,className}:Props) {
   return (
     <svg
     width={isResponsive ? `calc(${width}/375*80vw)`: width}

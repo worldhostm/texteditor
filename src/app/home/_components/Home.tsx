@@ -18,7 +18,7 @@ export default function Home({params}:any) {
   //   cache: 'force-cache', // ✅ SSG로 강제
   // });
   // const { data: posts } = await res.json();
-
+  console.info(Date.now().toLocaleString('kr'));
   const {count} = useEditStore();
 
   const [data, setData] = useState([]);
@@ -34,7 +34,7 @@ export default function Home({params}:any) {
       if(res.ok){
           const response = await res.json()
           setData(response.data);
-          setPageProps({...response});
+          setPageProps({data,...response});
       }
     }
     fetchData();
@@ -92,7 +92,10 @@ export default function Home({params}:any) {
         }
         </div>
         {/* 페이지네이션 추후 적용 0520 */}
-        {/* <Pagination {...pageProps}/> */}
+        {
+          pageProps?.totalItems && pageProps?.totalItems > 20 &&
+          <Pagination {...pageProps}/>
+        }
     </div>
   )
 }

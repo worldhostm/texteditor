@@ -294,6 +294,7 @@ const addImage = useCallback(() => {
   const [thumbnail, setThumbnail] = useState<File | null>(null);
 
   const handleThumbnailUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
     // const file = e.target.files?.[0]
     // if (!file) return
     // const reader = new FileReader();
@@ -302,12 +303,11 @@ const addImage = useCallback(() => {
     //   setThumbnail(reader.result);
    	// };
     
-    if(detaildata?.thumbnail){
+    if(detaildata?.thumbnail && !file){
       setThumbnailPreview(detaildata?.thumbnail);
       return;
     }
 
-    const file = e.target.files?.[0]
     if (!file || !file.type.startsWith('image/')) return
     // 파일 상태값 세팅
     setThumbnail(file);
@@ -467,11 +467,30 @@ const addImage = useCallback(() => {
       // 이제 서버로 저장
       try {
         // editor.getHTML()
-        const res = await axios.post('/api/save', { title,content: finalContent, status, thumbnail:thumbnail_S3});
+        const apiPath = isEdit
+        ? `/api/update/${detaildata?.id}`
+        : '/api/save';
+      
+      const endUrl = isEdit
+        ? `/posts/${detaildata?.id}`
+        : '/home';
+      
+      const payload = {
+        title,
+        content: finalContent,
+        status,
+        thumbnail: thumbnail_S3,
+        _id:detaildata?._id
+      };
+      
+      const res = isEdit
+        ? await axios.put(apiPath, payload)
+        : await axios.post(apiPath, payload);
+
         if(res.status <= 201 ){
           setLoading(false);
           //성공 시 홈으로
-          router.push('/home');
+          router.push(endUrl);
         }
       } catch (err) {
         console.error('❌ 저장 실패', err);
@@ -716,7 +735,10 @@ const addImage = useCallback(() => {
             >
               <SVGIcon id="h6" />
             </button> */}
-            <label htmlFor='thumbnail'>
+            <label 
+            title='썸네일'
+            className={`${styles.label_thumbnail}`} htmlFor='thumbnail'
+            >
               <SVGIcon id="format-thumbnail" />
               <input type="file" id="thumbnail" className={styles.thumbnailUpload} onChange={handleThumbnailUpload} style={{color:'black'}} />
             </label>

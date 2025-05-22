@@ -133,12 +133,14 @@
 .button_group{
   padding : 20px 0px;
   display: flex;
+  justify-content: center;
   word-break: break-all;
   width: 100%;
   height: auto;
 }
 .button_group button{
-  margin-left: 14px;
+  margin-left: 18px;
+  opacity: 0.64 ;
 }
 
 .editcomplete:hover{
@@ -152,3 +154,9 @@
 /* .titleContainer input::placeholder{
 
 } */
+ .label_thumbnail{
+  margin-left: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+ }

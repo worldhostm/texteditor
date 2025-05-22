@@ -7,4 +7,5 @@ export interface Content {
     publishedAt ?: Date,
     createdAt ?: Date,
     updatedAt ?: Date,
+    _id:string,
 }

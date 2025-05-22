@@ -31,7 +31,6 @@ export default function EditDetail({id}:Props) {
   }, [id])
 
   if (isLoading) return <div>로딩중...</div>
-
   return (
       <TiptapEditor isEdit detaildata={props}/>
   )
