@@ -449,12 +449,13 @@ const addImage = useCallback(() => {
       if (!html) return;
     
       const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html')
-      const imgElements = Array.from(doc.querySelectorAll('img[src^="blob:"]'))
-    
+      const doc = parser.parseFromString(html, 'text/html');
+      const imgElements = Array.from(doc.querySelectorAll('img[src^="blob:"]'));
+
       for (const imgele of imgElements) {
         const img = imgele as HTMLImageElement
         const blobUrl = img.src
+        console.info(blobUrl);
         const blob = await fetch(blobUrl).then(res => res.blob())
         const file = new File([blob], `text_editor-${Date.now()}.jpg`, { type: blob.type??'image/jpeg' })
     
@@ -463,7 +464,10 @@ const addImage = useCallback(() => {
       }
     
       const finalContent = doc.body.innerHTML
-      const thumbnail_S3 = await uploadThumbnailToS3(thumbnail);
+      // 썸네일을 변경하지 않고 수정할 시 처리
+      const thumbnail_S3 = String(thumbnailPreview)?.startsWith('blob') 
+                        ?  await uploadThumbnailToS3(thumbnail) 
+                        : detaildata?.thumbnail;
       // 이제 서버로 저장
       try {
         // editor.getHTML()
